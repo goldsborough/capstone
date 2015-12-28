@@ -15,9 +15,10 @@
 		+ while (! level.done()), read input, show menu if `Esc`, else pass to level player movements
 	+ private exit()
 	+ private resume()
-	+ private save()
-	+ contains players
-	+ handles frame-rate delay, then calls level.update() in the main loop
+	+ private save() // saves session
+	+ contains __profiles__, not players, because players are the UI (level) while profiles are the model (Game)
+	+ There is a timer which times out upon the framerate, puts keypresses into a hashtable <player, key> in the meantime, then upon timeout passes that to the level and clears it.
+	+ Map<ID, Direction>
 
 * Menu: display options to the user.
 
@@ -34,30 +35,44 @@ Renders a menu onto the screen. Two APIs:
 * Highscore
 	+ Object to keep track of highscores (time to complete a level).
 	+ Manages resources in .highscore files
-	+ Internally a TreeMap<points, name> for each level (use correct comparison function)
+	+ Internally a TreeMap<time, name> for each level (use correct comparison function)
 	+ And a HashMap<level_name, TreeMap<time, name>> for all levels
 	+ Can insert new player with time
 	+ Can delete names, though will be linear search
-	+ newEntry(time, Players...) // variadic
+	+ newEntry(level, time, List<Players>)
 
-* Level: Field that renders entities.
+* Level: Field that renders Renderables.
 	+ Contains hashmaps for various Renderables:
 		+ HashMap<Point, Wall>
 		+ HashMap<Point, Obstacle>
 		+ HashMap<Point, Key>
 		+ HashMap<Point, MysteryBox>
 	+ Decoding/handling of which object the player is colliding with can then be handled via the information of which HashMap the coordinate of the player is contained with, rather than having one HashMap<Point, Renderable> and then switch-casing on Renderable.Kind.
-	+ full management of storing/loading
+	+ full management of storing/loading .session files
 	+ Contains references to players (non-owning pointers)
-	+ update(): Compares player positions (updated by Game) with
+	+ update(Map<ID, Direction>):
+	+ done(): players dead or game won
+	+ Level(Properties levelSpecification, List<Profile>)
+	+ Level(Session session, List<Profile>)
+	+ representation has color?
+	+ Loads themes from .theme files which contain maps
+
+* Representation:
+	+ Character
+	+ Backgroundcolor
+	+ Foregroundcolor
+
+* Theme
+	+ Contains final HashMap<Kind, Representation>
+	+ extends Data
+	+ transports data and allows iteration
 
 * Renderable: Basic renderable object.
 	+ abstract
 	+ Defined by:
 		+ Point
-		+ Character
+		+ Character (to print)
 		+ Kind (Enum member)
-	+ Nested class Representation (Character, Color)
 	+ Renderable(Point, Kind)
 	+ Renderable(Point, Code)
 	+ Renderable(Point, Kind, Representation)
@@ -67,12 +82,11 @@ Renders a menu onto the screen. Two APIs:
 	+ serialize()/toString()
 	+ character()
 	+ color()
-	+ Loads representation to a static HashMap<Kind, Representation>
 
 * Player
 	+ extends Renderable
 	+ Direction Enum
-	+ Player(id)
+	+ Player(Profile)
 	+ up()
 	+ down() // Called by game
 	+ left()
@@ -81,15 +95,17 @@ Renders a menu onto the screen. Two APIs:
 	+ lives(): int
 	+ heal()
 	+ injure()
+	+ isAlive()
+	+ isDead()
 	+ reset() // for new level
 	+ contains a Profile object
 
 * Profile
 	+ real-name
 	+ keymap
-	+ personal highscore
 	+ times played
 	+ date joined
+	+ Renderable.Representation
 	+ stored as .profile
 
 * Wall
@@ -130,6 +146,31 @@ Renders a menu onto the screen. Two APIs:
 	+ Comparison functions
 	+ factory function for random
 
+* Session:
+	+ The name of the original level
+	+ The serialization of the current level (essentially a new level, but with the keys already collected gone etc.)
+	+ The number of keys collected
+	+ The time elapsed
+	+ Player positions: load only players that are registered for the game, put new players in new positions
+	+ Session stores hashset of players, then iterate over arraylist passed from game object, linear lookup fuck yeah
+
+* Stopwatch
+	+ Timing a Game
+
+* StaticObstacle: typedef for Renderable
+
+* DynamicObstacle: extends Renderable with update() function
+
+Players cannot move onto each other. At start, try to distribute them across entrances, but have them wait in the background if not enough entrances.
+
+Resources:
+* Profiles: player profiles
+* Levels: level specifications
+* Highscores: highscores for each level
+* Sessions: stored sessions
+
+
+
 ## How I am extending
 
 * Keep track of time
@@ -138,3 +179,39 @@ Renders a menu onto the screen. Two APIs:
 * Mystery Objects that generate more keys, deduct a life or add one
 * Functions for dynamic obstacles
 * Multiple Keys
+
+## TDD
+
+1. Think about what the code (function) will do
+2. Write test that will pass once the code does what it's supposed to
+3. Run the test, see it fail
+	* If you need to backtest, break old code, see the test fail, unbreak
+4. Write the code
+5. Run the test, see it pass (else modify code)
+
+If you write testable code, you ensure that your code:
+* is modular
+* has decoupled design
+* has methods of limited scope
+* (it has to be easy to test)
+
+Ultimately, you will have organized your thoughts and thus you will be faster in writing codes!
+
+* Some tests are too trivial to be useful.
+* Some things are too hard to test.
+
+"Executable Specs"
+
+* Have methods take arguments, even if just references and you pass internal state, rather than work with internal state implicitly. Easier to test.
+
+* Unit test review:
+	* `new` operators are difficult to test
+	* global state is difficult to test
+	* doing work in constructor is a bad idea, because you can only call it once for an object.
+
+Think about software testing like hardware testing: if you fuck up hardware test, you cannot go back. You must think of software testing in the same way.
+
+Could you reconstruct your code given only your tests?
+
+Ruby talk: https://www.youtube.com/watch?v=HhwElTL-mdI
+Google talk: https://www.youtube.com/watch?v=XcT4yYu_TTs
