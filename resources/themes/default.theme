@@ -1,0 +1,24 @@
+#Data for capstone.data.Theme
+#Thu Dec 31 01:19:01 CET 2015
+MYSTERY_BOX.foreground=MAGENTA
+WALL.background=YELLOW
+MYSTERY_BOX.character=?
+ENTRANCE.foreground=RED
+KEY.foreground=YELLOW
+DYNAMIC_OBSTACLE.foreground=YELLOW
+STATIC_OBSTACLE.foreground=GREEN
+MYSTERY_BOX.background=BLUE
+STATIC_OBSTACLE.background=GREEN
+WALL.character=#
+EXIT.character=*
+EXIT.foreground=YELLOW
+DYNAMIC_OBSTACLE.character=!
+STATIC_OBSTACLE.character=@
+WALL.foreground=YELLOW
+EXIT.background=GREEN
+ENTRANCE.background=GREEN
+KEY.background=GREEN
+ENTRANCE.character=^
+DYNAMIC_OBSTACLE.background=GREEN
+KEY.character=$
+name=default

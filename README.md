@@ -33,29 +33,29 @@ Renders a menu onto the screen. Two APIs:
 	+ public hide(Menu.Action) // unsets callback too
 
 * Highscore
-	+ Object to keep track of highscores (time to complete a level).
-	+ Manages resources in .highscore files
-	+ Internally a TreeMap<time, name> for each level (use correct comparison function)
-	+ And a HashMap<level_name, TreeMap<time, name>> for all levels
+	+ Object to keep track of a highscore (time to complete a level).
+	+ Manages resources in a .highscore file
+	+ Internally a TreeMap<time, name> (use correct comparison function)
 	+ Can insert new player with time
 	+ Can delete names, though will be linear search
 	+ newEntry(level, time, List<Players>)
 
-* Level: Field that renders Renderables.
-	+ Contains hashmaps for various Renderables:
+* Level: Field that renders Elements.
+	+ Contains hashmaps for various Elements:
 		+ HashMap<Point, Wall>
 		+ HashMap<Point, Obstacle>
 		+ HashMap<Point, Key>
 		+ HashMap<Point, MysteryBox>
-	+ Decoding/handling of which object the player is colliding with can then be handled via the information of which HashMap the coordinate of the player is contained with, rather than having one HashMap<Point, Renderable> and then switch-casing on Renderable.Kind.
+	+ Decoding/handling of which object the player is colliding with can then be handled via the information of which HashMap the coordinate of the player is contained with, rather than having one HashMap<Point, Element> and then switch-casing on Element.Kind.
 	+ full management of storing/loading .session files
-	+ Contains references to players (non-owning pointers)
 	+ update(Map<ID, Direction>):
 	+ done(): players dead or game won
 	+ Level(Properties levelSpecification, List<Profile>)
 	+ Level(Session session, List<Profile>)
-	+ representation has color?
 	+ Loads themes from .theme files which contain maps
+	+ has HashMap<Point, Element> for all items, when Players' Point hashes
+	+ to existing Element, then call interact
+	+ Additionally have ArrayList<Element> that needs to be updated (contains only references)
 
 * Representation:
 	+ Character
@@ -63,28 +63,28 @@ Renders a menu onto the screen. Two APIs:
 	+ Foregroundcolor
 
 * Theme
-	+ Contains final HashMap<Kind, Representation>
+	+ Contains HashMap<Kind, Representation>
 	+ extends Data
 	+ transports data and allows iteration
 
-* Renderable: Basic renderable object.
+* Element: Basic renderable object.
 	+ abstract
 	+ Defined by:
 		+ Point
 		+ Character (to print)
 		+ Kind (Enum member)
-	+ Renderable(Point, Kind)
-	+ Renderable(Point, Code)
-	+ Renderable(Point, Kind, Representation)
-	+ static kind(code)
+	+ Factory method fromKind
+	+ Element(Kind, Point, Representation)
 	+ static code(kind)
-	+ static private HashMap<Kind, Representation>
 	+ serialize()/toString()
-	+ character()
-	+ color()
+	+ representation()
+	+ point()
+	+ kind()
+	+ abstract interact(Player): overridden by Elements, controls what happens
+	  to a player when he/she interacts with this renderable.
 
 * Player
-	+ extends Renderable
+	+ extends Element
 	+ Direction Enum
 	+ Player(Profile)
 	+ up()
@@ -97,27 +97,29 @@ Renders a menu onto the screen. Two APIs:
 	+ injure()
 	+ isAlive()
 	+ isDead()
-	+ reset() // for new level
+	+ interact()
+	+ id()
 	+ contains a Profile object
+	+ lives has a maximum and minimum (0)
 
 * Profile
 	+ real-name
 	+ keymap
 	+ times played
 	+ date joined
-	+ Renderable.Representation
+	+ Element.Representation
 	+ stored as .profile
 
 * Wall
-	+ extends Renderable
+	+ extends Element
 	+ uses '□' as character, by default
 
 * Key
-	+ extends Renderable
+	+ extends Element
 	+ uses '🔑' as character, by default
 
 * MysteryBox
-	+ extends Renderable
+	+ extends Element
 	+ uses '⍰' as character, by default
 	+ reveal():
 		+ returns Event object, contains a message string and an enum member:
@@ -135,7 +137,7 @@ Renders a menu onto the screen. Two APIs:
 		+ UnlockDoor
 
 * Door
-	+ extends Renderable
+	+ extends Element
 	+ uses '🚪' as character, by default
 
 * Point
@@ -157,9 +159,9 @@ Renders a menu onto the screen. Two APIs:
 * Stopwatch
 	+ Timing a Game
 
-* StaticObstacle: typedef for Renderable
+* StaticObstacle: typedef for Element
 
-* DynamicObstacle: extends Renderable with update() function
+* DynamicObstacle: extends Element with update() function
 
 Players cannot move onto each other. At start, try to distribute them across entrances, but have them wait in the background if not enough entrances.
 
