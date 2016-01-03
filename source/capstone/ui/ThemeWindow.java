@@ -1,7 +1,6 @@
-package capstone.gui;
+package capstone.ui;
 
 import capstone.data.Theme;
-import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.dialog.FileDialog;

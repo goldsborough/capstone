@@ -30,9 +30,18 @@ public class MysteryBoxTest
         );
     }
 
+    @Test public void testIsNotRevealedAtStart()
+    {
+        assertFalse(box.isRevealed());
+    }
+
     @Test public void testRevealsWell()
     {
+        assert(! box.isRevealed());
+
         assertNotNull(box.reveal());
+
+        assertTrue(box.isRevealed());
     }
 
     @Test(expected=AssertionError.class)

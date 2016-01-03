@@ -5,6 +5,10 @@ import capstone.data.Representation;
 import capstone.data.Theme;
 import com.googlecode.lanterna.terminal.Terminal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
 /**
  * Created by petergoldsborough on 12/28/15.
  */
@@ -20,6 +24,11 @@ public abstract class Element
         DYNAMIC_OBSTACLE(5),
         MYSTERY_BOX(6),
         PLAYER(7);
+
+        public static Iterable<Kind> kinds()
+        {
+            return _kinds;
+        }
 
         public static Kind fromCode(int code)
         {
@@ -71,6 +80,17 @@ public abstract class Element
 
             return builder.toString();
         }
+
+        private static final ArrayList<Kind> _kinds = new ArrayList<Kind>(
+                Arrays.asList(
+                        WALL,
+                        ENTRANCE,
+                        EXIT,
+                        KEY,
+                        STATIC_OBSTACLE,
+                        DYNAMIC_OBSTACLE,
+                        MYSTERY_BOX
+        ));
 
         private final int _code;
 
@@ -131,6 +151,11 @@ public abstract class Element
         terminal.putCharacter(_representation.character());
     }
 
+    public void unrender()
+    {
+
+    }
+
     public Kind kind()
     {
         return _kind;
@@ -171,8 +196,7 @@ public abstract class Element
         Element other = (Element) object;
 
         return this._kind.equals(other._kind)   &&
-               this._point.equals(other._point) &&
-               this._representation.equals(other._representation);
+               this._point.equals(other._point);
     }
 
     protected final Kind _kind;

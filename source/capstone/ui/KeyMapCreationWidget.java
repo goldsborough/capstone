@@ -1,10 +1,9 @@
-package capstone.gui;
+package capstone.ui;
 
 import capstone.utility.KeyMap;
 import com.googlecode.lanterna.gui.component.ActionListBox;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 
 /**

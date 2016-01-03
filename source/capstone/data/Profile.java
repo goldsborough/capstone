@@ -2,7 +2,8 @@ package capstone.data;
 
 import capstone.utility.KeyMap;
 import capstone.element.Player;
-import capstone.gui.InputKey;
+import capstone.ui.InputKey;
+import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.File;
@@ -60,6 +61,75 @@ public final class Profile extends Data
                 other._keyMap,
                 other._representation
         );
+    }
+
+    public String id()
+    {
+        return _id;
+    }
+
+    public void id(String id)
+    {
+        assert(id != null);
+        assert(id.matches("[\\w-]+"));
+
+        _id = id;
+    }
+
+    public String realName()
+    {
+        return _realName;
+    }
+
+    public void realName(String realName)
+    {
+        assert(realName != null);
+
+        _realName = realName;
+    }
+
+    public KeyMap keyMap()
+    {
+        return _keyMap;
+    }
+
+    public void keyMap(KeyMap keymap)
+    {
+        assert(keymap != null);
+
+        _keyMap = keymap;
+    }
+
+    public Player.Direction direction(Key key)
+    {
+        return _keyMap.get(key);
+    }
+
+    public Calendar joined()
+    {
+        return _joined;
+    }
+
+    public int timesPlayed()
+    {
+        return _timesPlayed;
+    }
+
+    public void playedAGame()
+    {
+        ++_timesPlayed;
+    }
+
+    public Representation representation()
+    {
+        return _representation;
+    }
+
+    public void representation(Representation representation)
+    {
+        assert(representation != null);
+
+        _representation = representation;
     }
 
     @Override public void deserialize(Properties serialization)
@@ -150,70 +220,6 @@ public final class Profile extends Data
         );
 
         return serialization;
-    }
-
-    public String id()
-    {
-        return _id;
-    }
-
-    public void id(String id)
-    {
-        assert(id != null);
-        assert(id.matches("[\\w-]+"));
-
-        _id = id;
-    }
-
-    public String realName()
-    {
-        return _realName;
-    }
-
-    public void realName(String realName)
-    {
-        assert(realName != null);
-
-        _realName = realName;
-    }
-
-    public KeyMap keyMap()
-    {
-        return _keyMap;
-    }
-
-    public void keyMap(KeyMap keymap)
-    {
-        assert(keymap != null);
-
-        _keyMap = keymap;
-    }
-
-    public Calendar joined()
-    {
-        return _joined;
-    }
-
-    public int timesPlayed()
-    {
-        return _timesPlayed;
-    }
-
-    public void playedAGame()
-    {
-        ++_timesPlayed;
-    }
-
-    public Representation representation()
-    {
-        return _representation;
-    }
-
-    public void representation(Representation representation)
-    {
-        assert(representation != null);
-
-        _representation = representation;
     }
 
     @Override public boolean equals(Object object)

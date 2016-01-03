@@ -1,9 +1,11 @@
-package capstone.gui;
+package capstone.ui;
+
+import com.googlecode.lanterna.input.Key;
 
 /**
  * Created by petergoldsborough on 12/27/15.
  */
-public class InputKey extends com.googlecode.lanterna.input.Key
+public class InputKey extends Key
 {
     public static InputKey fromString(String serialized)
     {
@@ -15,6 +17,21 @@ public class InputKey extends com.googlecode.lanterna.input.Key
         }
 
         else return new InputKey(InputKey.Kind.valueOf(serialized));
+    }
+
+    public static InputKey fromKey(Key key)
+    {
+        if (key.getKind() == Kind.NormalKey)
+        {
+            return new InputKey(key.getCharacter());
+        }
+
+        else return new InputKey(key.getKind());
+    }
+
+    public static InputKey copy(InputKey key)
+    {
+        return fromKey(key);
     }
 
     public InputKey(char character)

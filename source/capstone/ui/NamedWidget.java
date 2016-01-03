@@ -1,7 +1,8 @@
-package capstone.gui;
+package capstone.ui;
 
 import com.googlecode.lanterna.gui.Component;
-import com.googlecode.lanterna.gui.component.*;
+import com.googlecode.lanterna.gui.component.Label;
+import com.googlecode.lanterna.gui.component.Panel;
 
 /**
  * Created by petergoldsborough on 12/30/15.

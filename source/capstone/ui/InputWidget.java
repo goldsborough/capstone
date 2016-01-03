@@ -1,4 +1,4 @@
-package capstone.gui;
+package capstone.ui;
 
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 

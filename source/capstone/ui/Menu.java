@@ -1,4 +1,4 @@
-package capstone.gui;
+package capstone.ui;
 
 /**
  * Created by petergoldsborough on 12/29/15.

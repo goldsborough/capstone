@@ -3,9 +3,9 @@ package capstone.data;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
-import capstone.data.Profile;
-import capstone.data.Representation;
+import capstone.element.Player;
 import capstone.utility.KeyMap;
+import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,6 +85,29 @@ public class ProfileTest
         assertThat(profile.timesPlayed(), is(before + 1));
     }
 
+    @Test public void testDirection()
+    {
+        assertThat(
+                profile.direction(new Key(Key.Kind.ArrowUp)),
+                is(Player.Direction.UP)
+        );
+
+        assertThat(
+                profile.direction(new Key(Key.Kind.ArrowDown)),
+                is(Player.Direction.DOWN)
+        );
+
+        assertThat(
+                profile.direction(new Key(Key.Kind.ArrowLeft)),
+                is(Player.Direction.LEFT)
+        );
+
+        assertThat(
+                profile.direction(new Key(Key.Kind.ArrowRight)),
+                is(Player.Direction.RIGHT)
+        );
+    }
+
     @Test(expected=AssertionError.class)
     public void testRejectsIDWithSymbolCharacters()
     {
@@ -120,6 +143,7 @@ public class ProfileTest
     {
         profile.representation(null);
     }
+
     @Test public void testSerialize()
     {
         Properties serialized = profile.serialize();

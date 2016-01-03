@@ -31,10 +31,65 @@ public class PointTest
         assertEquals(new Point(point), point);
     }
 
-    @Test(expected=AssertionError.class)
-    public void testCopyConstructorThrowsForNullArgument()
+    @Test public void testStringConstructorParsesWellFormedStrings()
     {
-        new Point(null);
+        String[] strings = {
+                "(123, 4567)",
+                "(123,4567)",
+                "(123 4567)",
+                "(  123, 4567)",
+                "(  123  4567 )",
+                "(123 | 4567)",
+                "123, 4567",
+                "123,4567",
+                "123 4567",
+                "[123, 4567]",
+                "[123 4567]",
+        };
+
+        for (String string : strings)
+        {
+            point = new Point(string);
+
+            assertThat(point.x(), is(123));
+            assertThat(point.y(), is(4567));
+        }
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testStringConstructorThrowsForIllFormedString1()
+    {
+        point = new Point("");
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testStringConstructorThrowsForIllFormedString2()
+    {
+        point = new Point("afdsfa");
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testStringConstructorThrowsForIllFormedString3()
+    {
+        point = new Point("123");
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testStringConstructorThrowsForIllFormedString4()
+    {
+        point = new Point("1 2 3 4 5 6");
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testStringConstructorThrowsForIllFormedString5()
+    {
+        point = new Point("(123, 45, 3)");
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testStringConstructorThrowsForIllFormedString6()
+    {
+        point = new Point("(123, a)");
     }
 
     @Test(expected=AssertionError.class)
@@ -49,7 +104,7 @@ public class PointTest
         point = new Point(0, -1);
     }
 
-    @Test public void testInterface()
+    @Test public void testAccessInterface()
     {
         point.x(123);
 
@@ -205,5 +260,12 @@ public class PointTest
         point = new Point(0, 0);
 
         point.left();
+    }
+
+    @Test public void testHashCode()
+    {
+        point = new Point(1, 3);
+
+        assertThat(point.hashCode(), is (1 ^ (3 << 1)));
     }
 }

@@ -6,13 +6,16 @@ package capstone;
 
 import capstone.data.Highscore;
 import capstone.data.Profile;
-import capstone.gui.Level;
-import capstone.gui.LevelWindow;
-import capstone.gui.ProfileWindow;
-import capstone.gui.WelcomeWindow;
+import capstone.data.Theme;
+import capstone.element.Player;
+import capstone.ui.InputKey;
+import capstone.ui.Level;
+import capstone.ui.LevelWindow;
+import capstone.ui.ProfileWindow;
 import capstone.utility.StopWatch;
 import com.googlecode.lanterna.TerminalFacade;
-import com.googlecode.lanterna.gui.*;
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.TerminalAppearance;
@@ -21,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Game
 {
@@ -37,9 +41,11 @@ public class Game
         _screen.startScreen();
 
         _gui = new GUIScreen(_screen, "Labyrinth");
+
+        _watch = new StopWatch();
     }
 
-    public void play()
+    public void play() throws IOException
     {
         start();
 
@@ -48,31 +54,59 @@ public class Game
         stop();
     }
 
-    public void start()
+    public void start() throws IOException
     {
         assert(_screen != null);
 
-        Window window = new WelcomeWindow();
+        //_gui.showWindow(new WelcomeWindow(), GUIScreen.Position.CENTER);
 
-        _gui.showWindow(window, GUIScreen.Position.CENTER);
+        //_getProfiles();
 
-        _getProfiles();
+        //_getLevel();
 
-        _getLevel();
+        _profiles = new ArrayList<>();
+
+        _profiles.add(new Profile(new File("resources/profiles/peter.profile")));
+
+        _level = new Level(
+                new File("resources/layouts/test.layout"),
+                new Theme(new File("resources/themes/default.theme")),
+                _profiles
+        );
+
+        _level.screen(_screen);
     }
 
     public void loop()
     {
+        while (true);
+
+        /*
         _watch.start();
 
+        StopWatch timer = new StopWatch(_framePeriod);
 
+        Map<String, Player.Direction> directions = new HashMap<>();
+
+        while (! _level.done())
+        {
+            _getInput(directions);
+
+            if (timer.timedOut())
+            {
+                _level.update(directions);
+
+                timer.reset();
+            }
+        }
 
         _watch.stop();
+        */
     }
 
     public void stop()
     {
-        _storeHighscore();
+        //_storeHighscore();
 
         _screen.stopScreen();
     }
@@ -107,6 +141,23 @@ public class Game
         _profiles = profileWindow.profiles();
 
         assert(_profiles != null);
+
+        _fillKeyMap(_profiles);
+    }
+
+    private void _fillKeyMap(ArrayList<Profile> profiles)
+    {
+        if (_keyMap == null) _keyMap = new HashMap<>();
+
+        else _keyMap.clear();
+
+        for (Profile profile : profiles)
+        {
+            for (InputKey key : profile.keyMap().keys())
+            {
+                _keyMap.put(key, profile);
+            }
+        }
     }
 
     private void _getLevel()
@@ -146,7 +197,7 @@ public class Game
             try
             {
                 highscore = new Highscore(file);
-                highscore.putProfiles(_watch.seconds(), _profiles);
+                highscore.put(_watch.seconds(), _profiles);
             }
 
             catch(IOException e)
@@ -155,16 +206,27 @@ public class Game
             }
         }
 
-        else
-        {
-            HashMap<Double, ArrayList<Profile>> map = new HashMap<>();
-
-            map.put(_watch.seconds(), _profiles);
-
-            highscore = new Highscore(_level.name(), map);
-        }
+        else highscore = new Highscore(
+                _level.name(),
+                _watch.seconds(),
+                _profiles
+        );
 
         return highscore;
+    }
+
+    private void _getInput(Map<String, Player.Direction> directions)
+    {
+        Key key = _screen.readInput();
+
+        if (key != null)
+        {
+            Profile profile = _keyMap.get(key);
+
+            Player.Direction direction = profile.direction(key);
+
+            directions.put(profile.id(), direction);
+        }
     }
 
     private long _framePeriod;
@@ -178,6 +240,8 @@ public class Game
     private final Screen _screen;
 
     private Terminal _terminal;
+
+    private Map<Key, Profile> _keyMap;
 
     private ArrayList<Profile> _profiles;
 }

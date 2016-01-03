@@ -1,13 +1,10 @@
-package capstone.gui;
+package capstone.ui;
 
 import capstone.data.Profile;
-import capstone.data.Representation;
 import capstone.utility.KeyMap;
-import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
-import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.File;
 import java.io.IOException;

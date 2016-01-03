@@ -181,13 +181,6 @@ public class Pattern implements Iterable<Delta>
         return Arrays.asList(_pattern).iterator();
     }
 
-    private java.util.regex.Pattern _createPattern()
-    {
-        String pattern = "(?<count>\\d+)?\\s*(?:\\(\\s*(-?\\d+)\\s*[,;\\s]\\s*(-?\\d+)\\)|([lrud]))";
-
-        return java.util.regex.Pattern.compile(pattern);
-    }
-
     private Delta _parseDelta(Matcher matcher)
     {
         if (matcher.group(2) != null)
@@ -237,7 +230,9 @@ public class Pattern implements Iterable<Delta>
         for (int i = 0; i < count; ++i) collection.add(delta);
     }
 
-    private final java.util.regex.Pattern _regex = _createPattern();
+    private static final java.util.regex.Pattern _regex = java.util.regex.Pattern.compile(
+       "(?<count>\\d+)?\\s*(?:\\(\\s*(-?\\d+)\\s*[,;\\s]\\s*(-?\\d+)\\)|([lrud]))"
+    );
 
     private final Delta[] _pattern;
 

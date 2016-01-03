@@ -2,6 +2,9 @@ package capstone.element;
 
 import capstone.utility.Point;
 import capstone.data.Representation;
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.dialog.MessageBox;
+import com.googlecode.lanterna.screen.Screen;
 
 import java.util.Random;
 
@@ -44,8 +47,6 @@ public class MysteryBox extends Element
                 case 10: return LOSE_KEY;
 
                 case 11: return UNLOCK_DOOR;
-
-                default: assert(false);
             }
 
             return null;
@@ -69,22 +70,39 @@ public class MysteryBox extends Element
     public MysteryBox(Point point, Representation representation)
     {
         super(Kind.MYSTERY_BOX, point, representation);
+    }
+
+    public Event reveal(GUIScreen screen)
+    {
+        assert(screen != null);
+        assert(_revealed == false);
+
+        _revealed = true;
 
         _event = Event.Random();
+
+        MessageBox.showMessageBox(
+            screen,
+            "Mystery Event",
+            _event.message()
+        );
+
+        return _event;
     }
 
-    public Event reveal()
+    public Event event()
     {
-        assert(_event != null);
+        assert(_revealed);
 
-        // show box with message
-
-        Event returned = _event;
-
-        _event = null;
-
-        return returned;
+        return _event;
     }
+
+    public boolean isRevealed()
+    {
+        return _revealed;
+    }
+
+    private boolean _revealed;
 
     private Event _event;
 }

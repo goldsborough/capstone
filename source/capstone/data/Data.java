@@ -45,4 +45,22 @@ public abstract class Data implements Serializable
     public abstract Properties serialize();
 
     public abstract String fileName();
+
+    protected static String get(Properties properties, String key)
+    {
+        assert(properties.containsKey(key));
+
+        return properties.getProperty(key);
+    }
+
+    protected static String pop(Properties properties, String key)
+    {
+        assert(properties.containsKey(key));
+
+        String value = properties.getProperty(key);
+
+        properties.remove(key);
+
+        return value;
+    }
 }

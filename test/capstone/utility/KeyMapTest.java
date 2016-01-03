@@ -1,9 +1,9 @@
-package capstone.gui;
+package capstone.utility;
 
 import capstone.element.Player;
-import capstone.utility.KeyMap;
+import capstone.ui.InputKey;
 
-import com.googlecode.lanterna.input.Key;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.*;
 
@@ -44,7 +44,7 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.Arrows();
 
-        assertThat(map.up(), is(new InputKey(InputKey.Kind.ArrowUp)));
+        assertThat(map.up(), CoreMatchers.is(new InputKey(InputKey.Kind.ArrowUp)));
         assertThat(map.down(), is(new InputKey(InputKey.Kind.ArrowDown)));
         assertThat(map.left(), is(new InputKey(InputKey.Kind.ArrowLeft)));
         assertThat(map.right(), is(new InputKey(InputKey.Kind.ArrowRight)));

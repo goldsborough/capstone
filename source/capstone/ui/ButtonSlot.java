@@ -1,4 +1,4 @@
-package capstone.gui;
+package capstone.ui;
 
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.component.Button;

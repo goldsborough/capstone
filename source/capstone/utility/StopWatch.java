@@ -8,6 +8,11 @@ public class StopWatch
 {
     public StopWatch() { }
 
+    public StopWatch(long timeout)
+    {
+        this.timeout(timeout);
+    }
+
     public StopWatch(boolean start)
     {
         if (start) start();
@@ -54,6 +59,25 @@ public class StopWatch
         assert(isRunning());
 
         _start = now();
+    }
+
+    public long timeout()
+    {
+        return _timeout;
+    }
+
+    public void timeout(long timeout)
+    {
+        assert(timeout >= 0);
+
+        _timeout = timeout;
+    }
+
+    public boolean timedOut()
+    {
+        assert(_timeout != null);
+
+        return milliseconds() >= _timeout;
     }
 
     public Long startTime()
@@ -128,6 +152,8 @@ public class StopWatch
     private long _pauseStart;
 
     private long _pausedTime;
+
+    private Long _timeout;
 
     private boolean _running;
 

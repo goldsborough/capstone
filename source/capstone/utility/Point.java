@@ -1,76 +1,85 @@
 package capstone.utility;
 
-public class Point implements Comparable<Point>
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Point extends Pair<Integer> implements Comparable<Point>
 {
-    public Point(int x, int y)
+    public Point(int first, int second)
     {
-        this.x(x);
-        this.y(y);
+        super(first, second);
     }
 
     public Point(Point other)
     {
-        assert(other != null);
+        super(other);
+    }
 
-        this.x(other.x());
-        this.y(other.y());
+    public Point(String string)
+    {
+        Matcher matcher = _pattern.matcher(string);
+
+        assert(matcher.matches());
+
+        this.x(Integer.parseInt(matcher.group(1)));
+        this.y(Integer.parseInt(matcher.group(2)));
     }
 
     public Point above()
     {
-        assert(_y > 0);
+        assert(y() > 0);
 
-        return new Point(_x, _y - 1);
+        return new Point(x(), y()- 1);
     }
 
     public Point below()
     {
-        return new Point(_x, _y + 1);
+        return new Point(x(), y() + 1);
     }
 
     public Point left()
     {
-        assert(_x > 0);
+        assert(x() > 0);
 
-        return new Point(_x - 1, _y);
+        return new Point(x() - 1, y());
     }
 
     public Point right()
     {
-        return new Point(_x + 1, _y);
+        return new Point(x() + 1, y());
     }
 
     public void x(int x)
     {
         assert(x >= 0);
 
-        _x = x;
+        super.first(x);
     }
 
     public int x()
     {
-        return _x;
+        return super.first();
     }
 
     public void y(int y)
     {
         assert(y >= 0);
 
-        _y = y;
+        super.second(y);
     }
 
     public int y()
     {
-        return _y;
+        return super.second();
     }
 
     public Point move(int dx, int dy)
     {
-        assert(_x + dx >= 0);
-        assert(_y + dy >= 0);
+        assert(_first + dx >= 0);
+        assert(_second + dy >= 0);
 
-        _x += dx;
-        _y += dy;
+        _first += dx;
+        _first += dy;
 
         return this;
     }
@@ -84,36 +93,10 @@ public class Point implements Comparable<Point>
 
     @Override public int compareTo(Point other)
     {
-        assert(other != null);
-
-        if (other == this) return 0;
-
-        int result = this._x.compareTo(other._x);
-
-        if (result != 0) return result;
-
-        return this._y.compareTo(other._y);
+        return super.compareTo(other);
     }
 
-    @Override public boolean equals(Object object)
-    {
-        if (object == null) return false;
-
-        if (! (object instanceof Point)) return false;
-
-        if (object == this) return true;
-
-        Point other = (Point) object;
-
-        return this._x.equals(other._x) && this._y.equals(other._y);
-    }
-
-    @Override public int hashCode()
-    {
-        return _x ^ (_y << 1);
-    }
-
-    // So we have compareTo implemented
-    private Integer _x;
-    private Integer _y;
+    private static final Pattern _pattern = Pattern.compile(
+            "[^\\d]*(\\d+)[^\\d]*(\\d+)[^\\d]*"
+    );
 }

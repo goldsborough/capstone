@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 class MockData extends Data
 {
@@ -141,5 +142,53 @@ public class DataTest
         assertContains(serialization, "s", "å∂€∑");
 
         assert(file.delete());
+    }
+
+    @Test public void testGetGetsCorrectValue()
+    {
+        Properties properties = new Properties();
+
+        properties.setProperty("key", "value");
+
+        assertThat(Data.get(properties, "key"), is("value"));
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testGetThrowsForNonExistingKey()
+    {
+        Properties properties = new Properties();
+
+        assertThat(Data.get(properties, "key"), is("value"));
+    }
+
+    @Test public void testPopGetsCorrectValue()
+    {
+        Properties properties = new Properties();
+
+        properties.setProperty("key", "value");
+
+        assertThat(Data.pop(properties, "key"), is("value"));
+    }
+
+    @Test public void testPopRemovesKey()
+    {
+        Properties properties = new Properties();
+
+        properties.setProperty("key", "value");
+
+        assert(properties.contains("key"));
+
+        Data.pop(properties, "key");
+
+        assertFalse(properties.contains("key"));
+
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testPopThrowsForNonExistingKey()
+    {
+        Properties properties = new Properties();
+
+        assertThat(Data.get(properties, "key"), is("value"));
     }
 }

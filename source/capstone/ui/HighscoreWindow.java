@@ -1,4 +1,4 @@
-package capstone.gui;
+package capstone.ui;
 
 import capstone.data.Highscore;
 import com.googlecode.lanterna.gui.GUIScreen;

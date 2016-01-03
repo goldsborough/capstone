@@ -1,6 +1,6 @@
 package capstone.utility;
 
-public class Delta implements Comparable<Delta>
+public class Delta extends Pair<Integer> implements Comparable<Delta>
 {
     public static Delta Up()
     {
@@ -24,41 +24,45 @@ public class Delta implements Comparable<Delta>
 
     public Delta(int x, int y)
     {
-        this.x(x);
-        this.y(y);
+        super(x, y);
     }
 
-    public void x(int x)
+    public Delta(Delta other)
     {
-        _x = x;
-
-        _euclidian = null;
-        _manhattan = null;
+        super(other);
     }
 
     public int x()
     {
-        return _x;
+        return super.first();
     }
 
-    public void y(int y)
+    public void x(int x)
     {
-        _y = y;
+        super.first(x);
 
-        _euclidian = null;
-        _manhattan = null;
+        _invalidate();
     }
 
     public int y()
     {
-        return _y;
+        return super.second();
+    }
+
+    public void y(int y)
+    {
+        super.second(y);
+
+        _invalidate();
     }
 
     public double euclidian()
     {
         if (_euclidian == null)
         {
-            _euclidian = Math.sqrt(_x*_x + _y*_y);
+            final int x = x(), y = y();
+
+            _euclidian = Math.sqrt(x*x + y*y);
         }
 
         return _euclidian;
@@ -66,14 +70,14 @@ public class Delta implements Comparable<Delta>
 
     public int manhattan()
     {
-        if (_manhattan == null) _manhattan = _x + _y;
+        if (_manhattan == null) _manhattan = x() + y();
 
         return _manhattan;
     }
 
     public Delta invert()
     {
-        return new Delta(-_x, -_y);
+        return new Delta(-x(), -y());
     }
 
     @Override public int compareTo(Delta other)
@@ -88,26 +92,11 @@ public class Delta implements Comparable<Delta>
         return _manhattan.compareTo(other.manhattan());
     }
 
-    @Override public boolean equals(Object object)
+    private void _invalidate()
     {
-        if (object == null) return false;
-
-        if (! (object instanceof Delta)) return false;
-
-        if (object == this) return true;
-
-        Delta other = (Delta) object;
-
-        return this._x.equals(other._x) && this._y.equals(other._y);
+        _euclidian = null;
+        _manhattan = null;
     }
-
-    @Override public int hashCode()
-    {
-        return _x ^ (_y << 1);
-    }
-
-    private Integer _x;
-    private Integer _y;
 
     private Integer _manhattan;
     private Double _euclidian;

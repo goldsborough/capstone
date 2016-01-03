@@ -47,7 +47,7 @@ public class Player extends Element
         if (_lives < MAXIMUM_LIVES) ++_lives;
     }
 
-    public void move(Direction direction)
+    public Player move(Direction direction)
     {
         assert(direction != null);
         assert(isAlive());
@@ -64,43 +64,53 @@ public class Player extends Element
 
             default: assert(false);
         }
+
+        return this;
     }
 
-    public void moveUp()
+    public Player moveUp()
     {
         assert(isAlive());
         assert(_point.y() > 0);
 
         _previousPoint = _point;
         _point = _point.above();
+
+        return this;
     }
 
-    public void moveDown()
+    public Player moveDown()
     {
         assert(isAlive());
 
         _previousPoint = _point;
         _point = _point.below();
+
+        return this;
     }
 
-    public void moveLeft()
+    public Player moveLeft()
     {
         assert(isAlive());
         assert(_point.x() > 0);
 
         _previousPoint = _point;
         _point = _point.left();
+
+        return this;
     }
 
-    public void moveRight()
+    public Player moveRight()
     {
         assert(isAlive());
 
         _previousPoint = _point;
         _point = _point.right();
+
+        return this;
     }
 
-    public void goBack()
+    public Player goBack()
     {
         assert(isAlive());
         
@@ -109,6 +119,8 @@ public class Player extends Element
 
         _point = _previousPoint;
         _previousPoint = null;
+
+        return this;
     }
 
     public String id()

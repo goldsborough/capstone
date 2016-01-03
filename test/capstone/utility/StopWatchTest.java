@@ -1,10 +1,10 @@
 package capstone.utility;
 
-import capstone.utility.StopWatch;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 /**
  * Created by petergoldsborough on 12/28/15.
@@ -136,5 +136,35 @@ public class StopWatchTest
     public void testResumeThrowsWhenNotPaused()
     {
         watch.resume();
+    }
+
+    @Test public void testTimeoutConstructor()
+    {
+        watch = new StopWatch(10);
+
+        assertThat(watch.timeout(), is((long)10));
+    }
+
+    @Test public void testTimeout() throws InterruptedException
+    {
+        watch.timeout(10);
+
+        watch.start();
+
+        Thread.sleep(11);
+
+        assertTrue(watch.timedOut());
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testTimeoutThrowsForNegativeValue()
+    {
+        watch.timeout(-4);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testTimedOutThrowsIfNoTimeoutSet()
+    {
+        watch.timedOut();
     }
 }

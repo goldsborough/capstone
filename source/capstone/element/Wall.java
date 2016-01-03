@@ -12,9 +12,4 @@ public class Wall extends Element
     {
         super(Element.Kind.WALL, point, representation);
     }
-
-    public void interact(Player player)
-    {
-
-    }
 }

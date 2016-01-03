@@ -1,7 +1,8 @@
 package capstone.utility;
 
 import capstone.element.Player;
-import capstone.gui.InputKey;
+import capstone.ui.InputKey;
+import com.googlecode.lanterna.input.Key;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -191,6 +192,11 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
     public Player.Direction get(InputKey key)
     {
         return _forward.get(key);
+    }
+
+    public Player.Direction get(Key key)
+    {
+        return get(InputKey.fromKey(key));
     }
 
     public InputKey get(Player.Direction direction)

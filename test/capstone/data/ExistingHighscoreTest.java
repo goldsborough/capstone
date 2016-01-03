@@ -50,19 +50,19 @@ public class ExistingHighscoreTest
         ids.add("Player1");
         ids.add("Player2");
         
-            highscore.putIds(1.23, ids);
+        highscore.putIds(1.23, new ArrayList<>(ids));
 
         ids.clear();
         ids.add("Player3");
 
-        highscore.putIds(3.14, ids);
-        highscore.putIds(10.0, ids);
+        highscore.putIds(3.14, new ArrayList<>(ids));
+        highscore.putIds(10.0, new ArrayList<>(ids));
 
 
         ids.clear();
         ids.add("Player4");
 
-        highscore.putIds(7.68, ids);
+        highscore.putIds(7.68, new ArrayList<>(ids));
 
         assertThat(highscore.serialize(), is(expected));
     }
@@ -238,8 +238,14 @@ public class ExistingHighscoreTest
     }
 
     @Test(expected=AssertionError.class)
-    public void testNameThrowsForNull()
+    public void testPutThrowsForEmptyProfiles()
     {
-        highscore.level(null);
+        highscore.put(1.23, new ArrayList<>());
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testPutIdsThrowsForEmptyProfiles()
+    {
+        highscore.put(1.23, new ArrayList<>());
     }
 }

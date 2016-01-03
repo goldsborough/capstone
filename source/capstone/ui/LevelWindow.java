@@ -1,18 +1,17 @@
-package capstone.gui;
+package capstone.ui;
 
 import capstone.data.Profile;
 import capstone.data.Theme;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.component.Button;
-import com.googlecode.lanterna.gui.dialog.FileDialog;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 
 public class LevelWindow extends Widget
 {
-    public LevelWindow(Collection<Profile> profiles)
+    public LevelWindow(List<Profile> profiles)
     {
         super("Level Selection");
 
@@ -100,7 +99,7 @@ public class LevelWindow extends Widget
         catch(IOException e) { _showIOErrorBox(); }
     }
 
-    private Collection<Profile> _profiles;
+    private List<Profile> _profiles;
 
     private Level _level;
 }

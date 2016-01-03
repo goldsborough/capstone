@@ -29,6 +29,13 @@ public class Theme extends Data implements Iterable<Map.Entry<Element.Kind, Repr
         load(file);
     }
 
+    public Theme(String name)
+    {
+        this.name(name);
+
+        _representations = new HashMap<>();
+    }
+
     public Theme(String name, Map<Element.Kind, Representation> map)
     {
         this.name(name);
@@ -114,6 +121,9 @@ public class Theme extends Data implements Iterable<Map.Entry<Element.Kind, Repr
 
     public void representation(Element.Kind kind, Representation representation)
     {
+        assert(kind != null);
+        assert(representation != null);
+
         _representations.put(kind, representation);
     }
 
