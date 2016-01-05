@@ -2,6 +2,7 @@ package capstone.element;
 
 import capstone.utility.Point;
 import capstone.data.Representation;
+import capstone.utility.Region;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.screen.Screen;
@@ -24,13 +25,11 @@ public class MysteryBox extends Element
 
         REMOVE_DYNAMIC_OBSTACLE("A dynamic obstacle disappears!"),
         REMOVE_STATIC_OBSTACLE("A dynamic obstacle disappears!"),
-        LOSE_KEY("You lose a key!"),
-
-        UNLOCK_DOOR("A door is unlocked!");
+        LOSE_KEY("You lose a key!");
 
         public static Event Random()
         {
-            switch(_random.nextInt(12))
+            switch(_random.nextInt(11))
             {
                 case 0: return EMPTY;
                 case 1: return HEAL;
@@ -45,8 +44,6 @@ public class MysteryBox extends Element
                 case 8: return REMOVE_DYNAMIC_OBSTACLE;
                 case 9: return REMOVE_STATIC_OBSTACLE;
                 case 10: return LOSE_KEY;
-
-                case 11: return UNLOCK_DOOR;
             }
 
             return null;
@@ -72,9 +69,9 @@ public class MysteryBox extends Element
         super(Kind.MYSTERY_BOX, point, representation);
     }
 
-    public Event reveal(GUIScreen screen)
+    public Event reveal(GUIScreen gui, Region region)
     {
-        assert(screen != null);
+        assert(gui != null);
         assert(_revealed == false);
 
         _revealed = true;
@@ -82,10 +79,12 @@ public class MysteryBox extends Element
         _event = Event.Random();
 
         MessageBox.showMessageBox(
-            screen,
+                gui,
             "Mystery Event",
             _event.message()
         );
+
+        super.unrender(gui.getScreen(), region);
 
         return _event;
     }

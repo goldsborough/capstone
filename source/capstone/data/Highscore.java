@@ -1,5 +1,7 @@
 package capstone.data;
 
+import capstone.utility.AbstractPair;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -11,7 +13,7 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
 {
     public static class Entry
     {
-        public Entry(double time, ArrayList<String> players)
+        public Entry(double time, List<String> players)
         {
             assert(players != null);
 
@@ -19,7 +21,7 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
             _players = players;
         }
 
-        public Entry(Map.Entry<Double, ArrayList<String>> mapEntry)
+        public Entry(Map.Entry<Double, List<String>> mapEntry)
         {
             this(mapEntry.getKey(), mapEntry.getValue());
         }
@@ -29,7 +31,7 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
             return _time;
         }
 
-        public ArrayList<String> players()
+        public List<String> players()
         {
             return _players;
         }
@@ -44,11 +46,13 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
 
             Entry other = (Entry) object;
 
-            return this._time == other._time && _players.equals(other._players);
+            return this._time == other._time             &&
+                    _players.containsAll(other._players) &&
+                    other._players.containsAll(_players);
         }
 
         private final double _time;
-        private final ArrayList<String> _players;
+        private final List<String> _players;
     }
 
     public Highscore(Properties properties)
@@ -76,7 +80,7 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         this.level(level);
     }
 
-    public Highscore(String level, Double time, ArrayList<Profile> profiles)
+    public Highscore(String level, Double time, List<Profile> profiles)
     {
         _map = new TreeMap<>();
 
@@ -85,19 +89,19 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         this.put(time, profiles);
     }
 
-    public Highscore(String level, Map<Double, ArrayList<Profile>> ids)
+    public Highscore(String level, Map<Double, List<Profile>> ids)
     {
         _map = new TreeMap<>();
 
         this.level(level);
 
-        for (Map.Entry<Double, ArrayList<Profile>> entry : ids.entrySet())
+        for (Map.Entry<Double, List<Profile>> entry : ids.entrySet())
         {
             this.put(entry.getKey(), entry.getValue());
         }
     }
 
-    public void put(double time, ArrayList<Profile> profiles)
+    public void put(double time, List<Profile> profiles)
     {
         assert(profiles != null);
         assert(! profiles.isEmpty());
@@ -105,7 +109,7 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         _map.put(time, _extractStrings(profiles));
     }
 
-    public void putIds(double time, ArrayList<String> ids)
+    public void putIds(double time, List<String> ids)
     {
         assert(ids != null);
         assert(! ids.isEmpty());
@@ -118,7 +122,7 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         assert(index <= _map.size());
         assert(index > 0);
 
-        Iterator<Map.Entry<Double, ArrayList<String>>>
+        Iterator<Map.Entry<Double, List<String>>>
                 iterator = _map.entrySet().iterator();
 
         while (--index > 0) iterator.next();
@@ -131,7 +135,7 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         return at(index).time();
     }
 
-    public ArrayList<String> playersAt(int index)
+    public List<String> playersAt(int index)
     {
         return at(index).players();
     }
@@ -163,16 +167,16 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         return entries().iterator();
     }
 
-    public Iterable<Map.Entry<Double, ArrayList<String>>> mapEntries()
+    public Collection<Map.Entry<Double, List<String>>> mapEntries()
     {
-        return _map.entrySet();
+        return Collections.unmodifiableCollection(_map.entrySet());
     }
 
     public Iterable<Entry> entries()
     {
-        ArrayList<Entry> entries = new ArrayList<>();
+        List<Entry> entries = new ArrayList<>();
 
-        for (Map.Entry<Double, ArrayList<String>> entry : _map.entrySet())
+        for (Map.Entry<Double, List<String>> entry : _map.entrySet())
         {
             entries.add(new Entry(entry));
         }
@@ -185,8 +189,12 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         _map.clear();
     }
 
-    @Override
-    public void deserialize(Properties serialization)
+    @Override public void store() throws IOException
+    {
+        super.store(new File("resources/highscores"));
+    }
+
+    @Override public void deserialize(Properties serialization)
     {
         assert(serialization != null);
 
@@ -204,17 +212,16 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         }
     }
 
-    @Override
-    public Properties serialize()
+    @Override public Properties serialize()
     {
         Properties properties = new Properties();
 
         properties.setProperty("level", _level);
 
-        for (Map.Entry<Double, ArrayList<String>> entry : _map.entrySet())
+        for (Map.Entry<Double, List<String>> entry : _map.entrySet())
         {
             properties.setProperty(
-                    String.format("%1$.3f", entry.getKey()),
+                    String.format("%1$.3f s", entry.getKey()),
                     String.join(", ", entry.getValue())
             );
         }
@@ -222,10 +229,9 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         return properties;
     }
 
-    @Override
-    public String fileName()
+    @Override public String fileName()
     {
-        return _level;
+        return String.format("%1$s.highscore", _level);
     }
 
     @Override public boolean equals(Object object)
@@ -241,16 +247,16 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         return _level.equals(other._level) && _map.equals(other._map);
     }
 
-    private static ArrayList<String> _extractStrings(Collection<Profile> profiles)
+    private static List<String> _extractStrings(Collection<Profile> profiles)
     {
-        ArrayList<String> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
 
         for (Profile profile : profiles) ids.add(profile.id());
 
         return ids;
     }
 
-    private final TreeMap<Double, ArrayList<String>> _map;
+    private final TreeMap<Double, List<String>> _map;
 
     private String _level;
 }

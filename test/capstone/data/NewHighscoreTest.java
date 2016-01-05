@@ -1,6 +1,7 @@
 package capstone.data;
 
 import capstone.data.Highscore;
+import capstone.element.Element;
 import capstone.utility.KeyMap;
 import com.googlecode.lanterna.terminal.Terminal;
 import org.junit.Test;
@@ -21,9 +22,10 @@ public class NewHighscoreTest
 {
     private Highscore highscore;
 
-    private static <K, V> void assertContains(Map<K, V> map, K key, V value) {
-        assertTrue(map.containsKey(key));
-        assertThat(map.get(key), is(value));
+    public <T, U> void assertEquals(Collection<T> first, Collection<U> second)
+    {
+        assertTrue(first.containsAll(second));
+        assertTrue(second.containsAll(first));
     }
 
     @Test public void testConstructsWellFromProperties()
@@ -44,7 +46,7 @@ public class NewHighscoreTest
 
         assertThat(highscore.size(), is(4));
 
-        ArrayList<String> players = new ArrayList<>();
+        List<String> players = new ArrayList<>();
 
         players.add("Player1");
         players.add("Player2");
@@ -98,15 +100,15 @@ public class NewHighscoreTest
         players.clear();
         players.add("Player3");
 
-        assertThat(highscore.playersAt(2), is(players));
-        assertThat(highscore.playersAt(4), is(players));
+        assertEquals(highscore.playersAt(2), players);
+        assertEquals(highscore.playersAt(4), players);
 
         players.clear();
         players.add("Player4");
 
         assertThat(highscore.playersAt(3), is(players));
 
-        file.delete();
+        assert(file.delete());
     }
 
     @Test public void testConstructsWellFromProfileMap()
@@ -124,18 +126,20 @@ public class NewHighscoreTest
                 representation
         );
 
-        HashMap<Double, ArrayList<Profile>> map = new HashMap<>();
+        HashMap<Double, List<Profile>> map = new HashMap<>();
 
-        ArrayList<Profile> ids = new ArrayList<>();
+        List<Profile> profiles = new ArrayList<>();
 
-        ids.add(new Profile(profile));
+        profiles.add(new Profile(profile));
 
-        map.put(1.23, new ArrayList<>(ids));
+        map.put(1.23, new ArrayList<>(profiles));
 
         profile.id("test2");
         profile.keyMap(KeyMap.WASD());
 
-        map.put(4.56, new ArrayList<>(ids));
+        profiles.add(new Profile(profile));
+
+        map.put(4.56, new ArrayList<>(profiles));
 
 
         highscore = new Highscore("Test", map);
@@ -143,11 +147,17 @@ public class NewHighscoreTest
         assertThat(highscore.timeAt(1), is(1.23));
         assertThat(highscore.timeAt(2), is(4.56));
 
-        assertThat(highscore.playersAt(2), is(ids));
+        assertEquals(
+                highscore.playersAt(2),
+                Arrays.asList("test", "test2")
+        );
 
-        ids.remove(1);
+        profiles.remove(1);
 
-        assertThat(highscore.playersAt(1), is(ids));
+        assertEquals(
+                highscore.playersAt(1),
+                Collections.singletonList("test")
+        );
     }
 
     @Test public void testConstructsWellFromSingleProfile()
@@ -165,14 +175,19 @@ public class NewHighscoreTest
                 representation
         );
 
-        ArrayList<Profile> profiles = new ArrayList<>();
+        List<Profile> profiles = new ArrayList<>();
 
         profiles.add(profile);
 
         highscore = new Highscore("Test", 1.23, profiles);
 
+        assertThat(highscore.size(), is(1));
+
         assertThat(highscore.timeAt(1), is(1.23));
 
-        assertThat(highscore.playersAt(1), is(profiles));
+        assertEquals(
+                highscore.playersAt(1),
+                Collections.singletonList("test")
+        );
     }
 }

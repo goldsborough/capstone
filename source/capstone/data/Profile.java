@@ -100,7 +100,7 @@ public final class Profile extends Data
         _keyMap = keymap;
     }
 
-    public Player.Direction direction(Key key)
+    public Player.Direction direction(InputKey key)
     {
         return _keyMap.get(key);
     }
@@ -130,6 +130,11 @@ public final class Profile extends Data
         assert(representation != null);
 
         _representation = representation;
+    }
+
+    @Override public void store() throws IOException
+    {
+        super.store(new File("resources/profiles"));
     }
 
     @Override public void deserialize(Properties serialization)
@@ -183,8 +188,6 @@ public final class Profile extends Data
 
         serialization.setProperty("id", _id);
         serialization.setProperty("realName", _realName);
-
-        System.out.println(_keyMap);
 
         for (Map.Entry<InputKey, Player.Direction> entry : _keyMap)
         {

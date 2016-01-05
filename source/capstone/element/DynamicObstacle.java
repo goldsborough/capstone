@@ -20,7 +20,7 @@ public class DynamicObstacle extends Element
         _pattern.next(_point);
     }
 
-    public void update(int rightBoundary, int bottomBoundary)
+    public void safeUpdate(int rightBoundary, int bottomBoundary)
     {
         _pattern.safeNext(_point, rightBoundary, bottomBoundary);
     }
@@ -37,6 +37,27 @@ public class DynamicObstacle extends Element
         do _pattern = _randomPattern();
 
         while (_pattern == old);
+    }
+
+    public Point peek()
+    {
+        assert(_pattern != null);
+
+        return new Point(_point).move(_pattern.peek());
+    }
+
+    public void skip()
+    {
+        assert(_pattern != null);
+
+        _pattern.skip();
+    }
+
+    public void goBack()
+    {
+        assert(_pattern != null);
+
+        _pattern.previous(_point);
     }
 
     private Pattern _randomPattern()

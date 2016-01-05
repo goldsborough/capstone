@@ -35,18 +35,11 @@ public class LevelWindow extends Widget
     {
         addSpace(0, 2);
 
-        _createNewGameButton();
+        add(new Button("New Game", this::_getLevel));
 
         addSpace(0, 2);
 
-        _createResumeGameButton();
-    }
-
-    private void _createNewGameButton()
-    {
-        Button button = new Button("New Game", this::_getLevel);
-
-        add(button);
+        add(new Button("Resume Game", this::_getSession));
     }
 
     private void _getLevel()
@@ -61,12 +54,12 @@ public class LevelWindow extends Widget
 
         try
         {
-            _level = new Level(file, theme, _profiles);
+            _level = new Level(file, theme, _profiles, getOwner());
+
+            this.close();
         }
 
         catch(IOException e) { _showIOErrorBox(); }
-
-        this.close();
     }
 
     private Theme _getTheme()
@@ -78,12 +71,6 @@ public class LevelWindow extends Widget
         return window.theme();
     }
 
-    private void _createResumeGameButton()
-    {
-        Button button = new Button("Resume Game", this::_getSession);
-
-        add(button);
-    }
 
     private void _getSession()
     {
@@ -93,7 +80,9 @@ public class LevelWindow extends Widget
 
         try
         {
-            _level = new Level(file, _profiles);
+            _level = new Level(file, _profiles, getOwner());
+
+            this.close();
         }
 
         catch(IOException e) { _showIOErrorBox(); }

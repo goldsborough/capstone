@@ -173,7 +173,7 @@ public class ExistingHighscoreTest
 
         HashMap<Double, Collection<String>> result = new HashMap<>();
 
-        for (Map.Entry<Double, ArrayList<String>> entry : highscore.mapEntries()) {
+        for (Map.Entry<Double, List<String>> entry : highscore.mapEntries()) {
 
             result.put(entry.getKey(), entry.getValue());
         }

@@ -47,7 +47,7 @@ public class NewThemeTest
                 Terminal.Color.RED
         );
 
-        for (Element.Kind kind : Element.Kind.values())
+        for (Element.Kind kind : Element.Kind.kinds())
         {
             assertThat(theme.representation(kind), is(expected));
 
@@ -88,7 +88,7 @@ public class NewThemeTest
                 Terminal.Color.RED
         );
 
-        for (Element.Kind kind : Element.Kind.values())
+        for (Element.Kind kind : Element.Kind.kinds())
         {
             assertThat(theme.representation(kind), is(expected));
 

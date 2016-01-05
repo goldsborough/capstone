@@ -82,7 +82,7 @@ public class ExistingThemeTest
                 Terminal.Color.BLUE
         );
 
-        for (Element.Kind kind : Element.Kind.values())
+        for (Element.Kind kind : Element.Kind.kinds())
         {
             assertThat(theme.representation(kind), is(expected));
 
@@ -98,7 +98,7 @@ public class ExistingThemeTest
 
         char character = 'A';
 
-        for (Element.Kind kind : Element.Kind.values())
+        for (Element.Kind kind : Element.Kind.kinds())
         {
             String string = kind.toString();
 

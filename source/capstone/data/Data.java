@@ -24,10 +24,7 @@ public abstract class Data implements Serializable
 
     public abstract void deserialize(Properties serialization);
 
-    public void store() throws IOException
-    {
-        store(new File("."));
-    }
+    public abstract void store() throws IOException;
 
     public void store(File directory) throws IOException
     {
@@ -39,7 +36,10 @@ public abstract class Data implements Serializable
 
         Properties serialization = serialize();
 
-        serialization.store(output, "Data for " + this.getClass().getName());
+        serialization.store(
+                output,
+                String.format("%1$s", this.getClass().getName())
+        );
     }
 
     public abstract Properties serialize();

@@ -44,7 +44,7 @@ public class PointTest
                 "123,4567",
                 "123 4567",
                 "[123, 4567]",
-                "[123 4567]",
+                "[123 4567]"
         };
 
         for (String string : strings)
@@ -53,6 +53,16 @@ public class PointTest
 
             assertThat(point.x(), is(123));
             assertThat(point.y(), is(4567));
+        }
+
+        String[] small = {"1,2", "1 2", "(1, 2)"};
+
+        for (String string : small)
+        {
+            point = new Point(string);
+
+            assertThat(point.x(), is(1));
+            assertThat(point.y(), is(2));
         }
     }
 

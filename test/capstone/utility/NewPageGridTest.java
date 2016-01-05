@@ -28,10 +28,12 @@ public class NewPageGridTest
                 new TerminalSize(2, 2)
         );
 
-        assertTrue(grid.hasNoElements());
+        assertTrue(grid.isEmpty());
         assertThat(grid.numberOfElements(), is(0));
 
         assertThat(grid.numberOfPages(), is(4));
+        assertThat(grid.width(), is(2));
+        assertThat(grid.height(), is(2));
 
         assertThat(grid.levelWidth(), is(4));
         assertThat(grid.levelHeight(), is(4));
@@ -42,7 +44,7 @@ public class NewPageGridTest
         assertThat(grid.terminalSize(), is(new LevelSize(2, 2)));
 
         assertTrue(grid.isPerfectFit());
-        assertFalse(grid.isRagged());
+        assertFalse(grid.isRaggedFit());
     }
 
     @Test public void testNonCollectionConstructorWorksForSmallerLevelThanTerminalSize()
@@ -52,10 +54,10 @@ public class NewPageGridTest
                 new TerminalSize(4, 4)
         );
 
-        assertTrue(grid.hasNoElements());
+        assertTrue(grid.isEmpty());
         assertThat(grid.numberOfElements(), is(0));
 
-        assertThat(grid.numberOfPages(), is(4));
+        assertThat(grid.numberOfPages(), is(1));
 
         assertThat(grid.levelWidth(), is(3));
         assertThat(grid.levelHeight(), is(3));
@@ -66,7 +68,7 @@ public class NewPageGridTest
         assertThat(grid.terminalSize(), is(new LevelSize(4, 4)));
 
         assertFalse(grid.isPerfectFit());
-        assertTrue(grid.isRagged());
+        assertTrue(grid.isRaggedFit());
     }
 
     @Test public void testNonCollectionConstructorWorksForRaggedFit()
@@ -76,10 +78,12 @@ public class NewPageGridTest
                 new TerminalSize(4, 4)
         );
 
-        assertTrue(grid.hasNoElements());
+        assertTrue(grid.isEmpty());
         assertThat(grid.numberOfElements(), is(0));
 
-        assertThat(grid.numberOfPages(), is(4));
+        assertThat(grid.numberOfPages(), is(1));
+        assertThat(grid.width(), is(1));
+        assertThat(grid.height(), is(1));
 
         assertThat(grid.levelWidth(), is(2));
         assertThat(grid.levelHeight(), is(2));
@@ -90,7 +94,33 @@ public class NewPageGridTest
         assertThat(grid.terminalSize(), is(new LevelSize(4, 4)));
 
         assertFalse(grid.isPerfectFit());
-        assertTrue(grid.isRagged());
+        assertTrue(grid.isRaggedFit());
+    }
+
+    @Test public void testNonCollectionConstructorWorksForAwkwardSizes()
+    {
+        grid = new PageGrid(
+                new LevelSize(8, 3),
+                new TerminalSize(2, 7)
+        );
+
+        assertTrue(grid.isEmpty());
+        assertThat(grid.numberOfElements(), is(0));
+
+        assertThat(grid.numberOfPages(), is(4));
+        assertThat(grid.width(), is(4));
+        assertThat(grid.height(), is(1));
+
+        assertThat(grid.levelWidth(), is(8));
+        assertThat(grid.levelHeight(), is(3));
+        assertThat(grid.levelSize(), is(new LevelSize(8, 3)));
+
+        assertThat(grid.terminalWidth(), is(2));
+        assertThat(grid.terminalHeight(), is(7));
+        assertThat(grid.terminalSize(), is(new LevelSize(2, 7)));
+
+        assertFalse(grid.isPerfectFit());
+        assertTrue(grid.isRaggedFit());
     }
 
     @Test public void testCollectionConstructor()
@@ -114,10 +144,12 @@ public class NewPageGridTest
                 elements
         );
 
-        assertFalse(grid.hasNoElements());
+        assertFalse(grid.isEmpty());
         assertThat(grid.numberOfElements(), is(2));
 
-        assertThat(grid.numberOfPages(), is(4));
+        assertThat(grid.numberOfPages(), is(1));
+        assertThat(grid.width(), is(1));
+        assertThat(grid.height(), is(1));
 
         Page page = grid.fetch(0, 0);
 
@@ -132,6 +164,6 @@ public class NewPageGridTest
         assertThat(grid.terminalSize(), is(new LevelSize(4, 4)));
 
         assertFalse(grid.isPerfectFit());
-        assertTrue(grid.isRagged());
+        assertTrue(grid.isRaggedFit());
     }
 }

@@ -4,6 +4,8 @@ import capstone.element.Player;
 import capstone.ui.InputKey;
 import com.googlecode.lanterna.input.Key;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -209,24 +211,24 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
         return forward().iterator();
     }
 
-    public Iterable<Map.Entry<InputKey, Player.Direction>> forward()
+    public Collection<Map.Entry<InputKey, Player.Direction>> forward()
     {
-        return _forward.entrySet();
+        return Collections.unmodifiableCollection(_forward.entrySet());
     }
 
-    public Iterable<Map.Entry<Player.Direction, InputKey>> backward()
+    public Collection<Map.Entry<Player.Direction, InputKey>> backward()
     {
-        return _backward.entrySet();
+        return Collections.unmodifiableCollection(_backward.entrySet());
     }
 
-    public Iterable<InputKey> keys()
+    public Collection<InputKey> keys()
     {
-        return _forward.keySet();
+        return Collections.unmodifiableCollection(_forward.keySet());
     }
 
-    public Iterable<Player.Direction> directions()
+    public Collection<Player.Direction> directions()
     {
-        return _backward.keySet();
+        return Collections.unmodifiableCollection(_backward.keySet());
     }
 
     public void clear()

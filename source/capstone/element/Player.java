@@ -2,6 +2,9 @@ package capstone.element;
 
 import capstone.data.Profile;
 import capstone.utility.Point;
+import capstone.utility.Region;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 
 /**
  * Created by petergoldsborough on 12/27/15.
@@ -30,6 +33,12 @@ public class Player extends Element
         _previousPoint = null;
 
         assert(_lives <= MAXIMUM_LIVES);
+    }
+
+
+    @Override public void render(Screen screen, Region relativeTo)
+    {
+        _render(screen, relativeTo, ScreenCharacterStyle.Blinking);
     }
 
     public void injure()
@@ -61,8 +70,6 @@ public class Player extends Element
             case LEFT: moveLeft(); break;
 
             case RIGHT: moveRight(); break;
-
-            default: assert(false);
         }
 
         return this;
@@ -123,6 +130,11 @@ public class Player extends Element
         return this;
     }
 
+    public boolean canGoBack()
+    {
+        return _previousPoint != null;
+    }
+
     public String id()
     {
         return _profile.id();
@@ -158,9 +170,23 @@ public class Player extends Element
 
         Player other = (Player) object;
 
-        return super.equals(other)             &&
-               _profile.equals(other._profile) &&
-               _lives == other._lives;
+        return this.id().equals(other.id());
+    }
+
+    public String toString()
+    {
+        if (isAlive())
+        {
+            return String.format(
+                    "%1$s: %2$d/%3$d Lives\t %4$s",
+                    id(),
+                    lives(),
+                    Player.MAXIMUM_LIVES,
+                    point()
+            );
+        }
+
+        else return String.format("%1$s: DEAD", id());
     }
 
     private Profile _profile;

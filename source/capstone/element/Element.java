@@ -3,10 +3,16 @@ package capstone.element;
 import capstone.utility.Point;
 import capstone.data.Representation;
 import capstone.data.Theme;
+import capstone.utility.Region;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.ScreenCharacterStyle;
+import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -25,9 +31,9 @@ public abstract class Element
         MYSTERY_BOX(6),
         PLAYER(7);
 
-        public static Iterable<Kind> kinds()
+        public static Collection<Kind> kinds()
         {
-            return _kinds;
+            return Collections.unmodifiableCollection(_kinds);
         }
 
         public static Kind fromCode(int code)
@@ -106,21 +112,28 @@ public abstract class Element
 
         Representation representation = theme.representation(kind);
 
-        switch(kind)
+        switch (kind)
         {
-            case WALL: return new Wall(point, representation);
+            case WALL:
+                return new Wall(point, representation);
 
-            case ENTRANCE: return new Entrance(point, representation);
+            case ENTRANCE:
+                return new Entrance(point, representation);
 
-            case EXIT: return new Exit(point, representation);
+            case EXIT:
+                return new Exit(point, representation);
 
-            case KEY: return new Key(point, representation);
+            case KEY:
+                return new Key(point, representation);
 
-            case STATIC_OBSTACLE: return new StaticObstacle(point, representation);
+            case STATIC_OBSTACLE:
+                return new StaticObstacle(point, representation);
 
-            case DYNAMIC_OBSTACLE: return new DynamicObstacle(point, representation);
+            case DYNAMIC_OBSTACLE:
+                return new DynamicObstacle(point, representation);
 
-            case MYSTERY_BOX: return new MysteryBox(point, representation);
+            case MYSTERY_BOX:
+                return new MysteryBox(point, representation);
         }
 
         throw new IllegalArgumentException("Kind invalid!");
@@ -141,19 +154,23 @@ public abstract class Element
         this(other.kind(), other.point(), other.representation());
     }
 
-    public void render(Terminal terminal)
+    public void render(Screen screen, Region relativeTo)
     {
-        terminal.moveCursor(_point.x(), _point.y());
-
-        terminal.applyBackgroundColor(_representation.background());
-        terminal.applyForegroundColor(_representation.foreground());
-
-        terminal.putCharacter(_representation.character());
+        _render(screen, relativeTo);
     }
 
-    public void unrender()
+    public void unrender(Screen screen, Region relativeTo)
     {
+        ScreenWriter writer = new ScreenWriter(screen);
 
+        writer.setBackgroundColor(Terminal.Color.DEFAULT);
+        writer.setForegroundColor(Terminal.Color.DEFAULT);
+
+        writer.drawString(
+                _point.x() - relativeTo.southWest().x(),
+                _point.y() - relativeTo.northEast().y(),
+                " "
+        );
     }
 
     public Kind kind()
@@ -197,6 +214,23 @@ public abstract class Element
 
         return this._kind.equals(other._kind)   &&
                this._point.equals(other._point);
+    }
+
+    protected void _render(Screen screen,
+                           Region relativeTo,
+                           ScreenCharacterStyle... styles)
+    {
+        ScreenWriter writer = new ScreenWriter(screen);
+
+        writer.setBackgroundColor(_representation.background());
+        writer.setForegroundColor(_representation.foreground());
+
+        writer.drawString(
+                _point.x() - relativeTo.southWest().x(),
+                _point.y() - relativeTo.northEast().y(),
+                Character.toString(_representation.character()),
+                styles
+        );
     }
 
     protected final Kind _kind;

@@ -1,6 +1,7 @@
 package capstone.utility;
 
 import capstone.data.Representation;
+import capstone.data.Theme;
 import capstone.element.DynamicObstacle;
 import capstone.element.Element;
 import capstone.element.Entrance;
@@ -14,7 +15,10 @@ import com.googlecode.lanterna.terminal.TerminalSize;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,6 +35,8 @@ public class ExistingPageGridTest
     private List<Element> elements;
 
     private List<Element> remaining;
+
+    private Theme theme;
 
     public void fill()
     {
@@ -51,6 +57,17 @@ public class ExistingPageGridTest
 
         );
 
+        Map<Element.Kind, Representation> map = new HashMap<>();
+
+        for (Element.Kind kind : Element.Kind.values())
+        {
+            map.put(kind, representation);
+        }
+
+        theme = new Theme("test", map);
+
+        elements = new ArrayList<>();
+
         elements.add(new Wall(new Point(0, 0), representation));
         elements.add(new Key(new Point(1, 1), representation));
 
@@ -66,8 +83,10 @@ public class ExistingPageGridTest
         elements.forEach(grid::add);
 
 
+        remaining = new ArrayList<>();
+
         remaining.add(new Wall(new Point(0, 1), representation));
-        remaining.add(new Wall(new Point(1, 1), representation));
+        remaining.add(new Wall(new Point(1, 0), representation));
 
         remaining.add(new Wall(new Point(1, 2), representation));
         remaining.add(new Wall(new Point(0, 3), representation));
@@ -81,10 +100,10 @@ public class ExistingPageGridTest
 
     @Test public void testAdd()
     {
-        assertFalse(grid.hasNoElements());
+        assertFalse(grid.isEmpty());
         assertThat(grid.numberOfElements(), is(8));
 
-        grid.forEach(page -> assertThat(page.size(), is(2)));
+        grid.pages().forEach(page -> assertThat(page.size(), is(2)));
 
 
         assertTrue(grid.fetch(0, 0).contains(elements.get(0)));
@@ -112,24 +131,6 @@ public class ExistingPageGridTest
 
         assertFalse(page.contains(elements.get(0)));
         assertTrue(page.contains(elements.get(1)));
-    }
-
-    @Test public void testContains()
-    {
-        elements.forEach(e -> assertTrue(grid.contains(e)));
-    }
-
-    @Test public void testAt()
-    {
-        for (Element element : elements)
-        {
-            assertThat(grid.at(element.point()), is(element));
-        }
-    }
-
-    @Test public void testHasAt()
-    {
-        elements.forEach(e -> assertTrue(grid.hasAt(e.point())));
     }
 
     @Test public void testFetchPageOf()
@@ -163,6 +164,30 @@ public class ExistingPageGridTest
         assertTrue(page.contains(elements.get(1)));
     }
 
+    @Test public void testFetchDoesChangeCurrentIndex()
+    {
+        grid.fetch(1, 1);
+
+        assertThat(grid.currentIndex(), is(new Index(1, 1)));
+    }
+
+    @Test public void testGet()
+    {
+        Page page = grid.get(0, 0);
+
+        assertTrue(page.contains(elements.get(0)));
+        assertTrue(page.contains(elements.get(1)));
+    }
+
+    @Test public void testGetDoesChangeCurrentIndex()
+    {
+        grid.fetch(0, 0);
+
+        grid.get(1, 1);
+
+        assertThat(grid.currentIndex(), is(new Index(0, 0)));
+    }
+
     @Test public void testCurrentIndex()
     {
         grid.fetch(0, 0);
@@ -178,7 +203,7 @@ public class ExistingPageGridTest
         assertThat(grid.currentPage(), is(page));
 
         page = grid.fetch(1, 1);
-        assertThat(grid.currentIndex(), is(page));
+        assertThat(grid.currentPage(), is(page));
     }
 
     @Test public void testSizeAccess()
@@ -199,7 +224,7 @@ public class ExistingPageGridTest
         assertTrue(grid.isFull());
         assertFalse(grid.isEmpty());
 
-        assertThat(grid.size(), is(grid.capacity()));
+        assertThat(grid.numberOfElements(), is(grid.capacity()));
     }
 
     @Test public void testCapacity()
@@ -209,7 +234,7 @@ public class ExistingPageGridTest
 
     @Test public void testKindGenerateForNonFullLevel()
     {
-        Element result = grid.generate(Element.Kind.WALL);
+        Element result = grid.generate(Element.Kind.WALL, theme);
 
         assertNotNull(result);
     }
@@ -220,7 +245,7 @@ public class ExistingPageGridTest
 
         assert(grid.isFull());
 
-        Element result = grid.generate(Element.Kind.WALL);
+         Element result = grid.generate(Element.Kind.WALL, theme);
 
         assertNull(result);
     }
@@ -234,16 +259,20 @@ public class ExistingPageGridTest
         assertThat(grid.numberOfElements(), is(7));
         assertThat(grid.capacity(), is(grid.levelWidth() * grid.levelHeight()));
 
-        assertFalse(grid.fetchPageFor(removed).contains(removed));
+        assertFalse(grid.fetchPageOf(removed).contains(removed));
     }
 
     @Test public void testKindRemoveForNoExistingElementOfThatKind()
     {
+        grid.remove(Element.Kind.MYSTERY_BOX);
+
+        assert(grid.find(Element.Kind.MYSTERY_BOX) == null);
+
         Element removed = grid.remove(Element.Kind.MYSTERY_BOX);
 
         assertNull(removed);
 
-        assertThat(grid.numberOfElements(), is(8));
+        assertThat(grid.numberOfElements(), is(7));
         assertThat(grid.capacity(), is(grid.levelWidth() * grid.levelHeight()));
     }
 
@@ -258,7 +287,7 @@ public class ExistingPageGridTest
 
     @Test public void testKindFindForNonExistingElementOfThatKind()
     {
-        grid.remove(element.get(4));
+        grid.remove(elements.get(4));
 
         Element found = grid.find(Element.Kind.MYSTERY_BOX);
 
@@ -267,33 +296,33 @@ public class ExistingPageGridTest
 
     @Test public void testFindFreeSpaceForNonFullLevel()
     {
-        Point found = grid.findFreeSpace();
+        PageGrid.Location location = grid.findFreeSpace();
 
-        assertNotNull(found);
+        assertNotNull(location);
 
-        assertFalse(grid.fetchPageFor(found).hasAt(found));
+        assertFalse(grid.fetch(location.index()).isEmpty());
     }
 
     @Test public void testFindFreeSpaceForFullLevel()
     {
         fill();
 
-        Point found = grid.findFreeSpace();
+        PageGrid.Location location = grid.findFreeSpace();
 
-        assertNull(found);
+        assertNull(location);
     }
 
     @Test public void testFollow()
     {
         grid.fetch(0, 0);
 
-        assert(grid.currentIndex(), is(new Index(0, 0));
+        assertThat(grid.currentIndex(), is(new Index(0, 0)));
 
-        Element outside = new Wall(new Point(2, 3), representation);
+        Element outside = new Wall(new Point(2, 0), representation);
 
         grid.follow(outside);
 
-        assertThat(grid.currentIndex(), is(new Index(0, 1)));
+        assertThat(grid.currentIndex(), is(new Index(1, 0)));
     }
 
     @Test public void testFetchAboveReturnsCorrectPageWhenIsPossible()
@@ -302,7 +331,7 @@ public class ExistingPageGridTest
 
         assertNotNull(grid.fetchAbove());
 
-        assertThat(grid.currentIndex(), is(new Index(0, 1)));
+        assertThat(grid.currentIndex(), is(new Index(0, 0)));
     }
 
     @Test public void testFetchAboveReturnsNullWhenFetchingNotPossible()
@@ -368,23 +397,160 @@ public class ExistingPageGridTest
         assertThat(grid.currentIndex(), is(new Index(1, 1)));
     }
 
+
+    @Test public void testGetAboveReturnsCorrectPageWhenIsPossible()
+    {
+        grid.fetch(0, 1);
+
+        assertNotNull(grid.getAbove());
+
+        assertThat(grid.currentIndex(), is(new Index(0, 1)));
+    }
+
+    @Test public void testGetAboveReturnsNullWhenGettingNotPossible()
+    {
+        assert(grid.currentIndex().equals(new Index(0, 0)));
+
+        assertNull(grid.getAbove());
+
+        assertThat(grid.currentIndex(), is(new Index(0, 0)));
+    }
+
+    @Test public void testGetBelowReturnsCorrectPageWhenIsPossible()
+    {
+        assert(grid.currentIndex().equals(new Index(0, 0)));
+
+        assertNotNull(grid.getBelow());
+
+        assertThat(grid.currentIndex(), is(new Index(0, 0)));
+    }
+
+    @Test public void testGetBelowReturnsNullWhenGettingNotPossible()
+    {
+        grid.fetch(1, 1); // can't go down
+
+        assertNull(grid.getBelow());
+
+        assertThat(grid.currentIndex(), is(new Index(1, 1)));
+    }
+
+    @Test public void testGetLeftReturnsCorrectPageWhenIsPossible()
+    {
+        grid.fetch(1, 0);
+
+        assertNotNull(grid.getLeft());
+
+        assertThat(grid.currentIndex(), is(new Index(1, 0)));
+    }
+
+    @Test public void testGetLeftReturnsNullWhenGettingNotPossible()
+    {
+        assert(grid.currentIndex().equals(new Index(0, 0)));
+
+        assertNull(grid.getLeft());
+
+        assertThat(grid.currentIndex(), is(new Index(0, 0)));
+    }
+
+    @Test public void testGetRightReturnsCorrectPageWhenIsPossible()
+    {
+        assert(grid.currentIndex().equals(new Index(0, 0)));
+
+        assertNotNull(grid.getRight());
+
+        assertThat(grid.currentIndex(), is(new Index(0, 0)));
+    }
+
+    @Test public void testGetRightReturnsNullWhenGettingNotPossible()
+    {
+        grid.fetch(1, 1);
+
+        assertNull(grid.getRight());
+
+        assertThat(grid.currentIndex(), is(new Index(1, 1)));
+    }
+
+
     @Test public void testResizeOnlyForTerminalSizeChange()
     {
-        // 16 squares
-        // check same elements contained...
+        int numberOfElementsBefore = grid.numberOfElements();
 
         grid.resize(new TerminalSize(1, 1));
+
+        assertThat(grid.numberOfElements(), is(numberOfElementsBefore));
+        assertThat(grid.numberOfPages(), is(16));
+
+        assertTrue(grid.fetch(0, 0).contains(elements.get(0)));
+        assertTrue(grid.fetch(1, 1).contains(elements.get(1)));
+
+        assertTrue(grid.fetch(0, 2).contains(elements.get(2)));
+        assertTrue(grid.fetch(1, 3).contains(elements.get(3)));
+
+        assertTrue(grid.fetch(2, 0).contains(elements.get(4)));
+        assertTrue(grid.fetch(3, 0).contains(elements.get(5)));
+
+        assertTrue(grid.fetch(2, 2).contains(elements.get(6)));
+        assertTrue(grid.fetch(3, 3).contains(elements.get(7)));
     }
 
     @Test public void testResizeOnlyForLevelSizeChange()
     {
-        // 16 squares
+        int numberOfElementsBefore = grid.numberOfElements();
+
         grid.resize(new LevelSize(8, 8));
+
+        assertThat(grid.numberOfElements(), is(numberOfElementsBefore));
+        assertThat(grid.numberOfPages(), is(16));
+
+        assertTrue(grid.fetch(0, 0).contains(elements.get(0)));
+        assertTrue(grid.fetch(0, 0).contains(elements.get(1)));
+
+        assertTrue(grid.fetch(0, 1).contains(elements.get(2)));
+        assertTrue(grid.fetch(0, 1).contains(elements.get(3)));
+
+        assertTrue(grid.fetch(1, 0).contains(elements.get(4)));
+        assertTrue(grid.fetch(1, 0).contains(elements.get(5)));
+
+        assertTrue(grid.fetch(1, 1).contains(elements.get(6)));
+        assertTrue(grid.fetch(1, 1).contains(elements.get(7)));
+
+        for (int row = 2; row <= 3; ++row)
+        {
+            for (int column = 2; column <= 3; ++column)
+            {
+                assertTrue(grid.get(column, row).isEmpty());
+            }
+        }
     }
 
     @Test public void testResizeForTerminalSizeAndLevelSizeChange()
     {
+        int numberOfElementsBefore = grid.numberOfElements();
+
         grid.resize(new LevelSize(8, 8), new TerminalSize(3, 3));
+
+        assertThat(grid.numberOfElements(), is(numberOfElementsBefore));
+        assertThat(grid.numberOfPages(), is(9));
+        assertTrue(grid.isRaggedFit());
+        assertFalse(grid.isPerfectFit());
+
+        assertTrue(grid.fetch(0, 0).contains(elements.get(0)));
+        assertTrue(grid.fetch(0, 0).contains(elements.get(1)));
+        assertTrue(grid.fetch(0, 0).contains(elements.get(2)));
+        assertTrue(grid.fetch(0, 0).contains(elements.get(4)));
+        assertTrue(grid.fetch(0, 0).contains(elements.get(6)));
+
+        assertTrue(grid.fetch(0, 1).contains(elements.get(3)));
+
+        assertTrue(grid.fetch(1, 0).contains(elements.get(5)));
+
+        assertTrue(grid.fetch(1, 1).contains(elements.get(7)));
+
+        for (int i = 0; i < 3; ++i)
+        {
+            assertTrue(grid.fetch(i, 2).isEmpty());
+            assertTrue(grid.fetch(2, i).isEmpty());
+        }
     }
 
     @Test(expected=AssertionError.class)

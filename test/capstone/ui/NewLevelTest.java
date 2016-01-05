@@ -1,5 +1,9 @@
 package capstone.ui;
 
+import capstone.utility.Page;
+import com.googlecode.lanterna.TerminalFacade;
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.screen.Screen;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,16 +35,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * Created by petergoldsborough on 12/29/15.
- */
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+
 public class NewLevelTest
 {
     private static final int dimension = 5;
 
     private static Theme theme;
-
-    private String name = "Test";
 
     private List<Profile> profiles;
 
@@ -60,6 +62,15 @@ public class NewLevelTest
 
     private Map<Point, MysteryBox> mysteryBoxes;
 
+    private GUIScreen screen;
+
+
+    public <T, U> void assertEquals(Collection<T> first, Collection<U> second)
+    {
+        assertTrue(first.containsAll(second));
+        assertTrue(second.containsAll(first));
+    }
+
     public Collection<Element> allElements()
     {
         Collection<Element> elements = new ArrayList<>();
@@ -70,9 +81,9 @@ public class NewLevelTest
 
         elements.addAll(entrances.values());
 
-        elements.addAll(entrances.values());
-
         elements.addAll(exits.values());
+
+        elements.addAll(keys.values());
 
         elements.addAll(staticObstacles.values());
 
@@ -83,17 +94,17 @@ public class NewLevelTest
         return elements;
     }
 
-    public Properties layout()
+    public Properties getLayout()
     {
         Properties properties = new Properties();
 
         properties.setProperty("Width", "5");
         properties.setProperty("Height", "5");
 
-        properties.setProperty("Theme", "default.theme");
-
         for (Element element : allElements())
         {
+            if (element.kind() == Element.Kind.PLAYER) continue;
+
             properties.setProperty(
                     element.point().toStringPlain(),
                     Integer.toString(element.kind().code())
@@ -103,19 +114,57 @@ public class NewLevelTest
         return properties;
     }
 
-    public File file()
+    public Properties getSession()
+    {
+        Properties properties = getLayout();
+
+        properties.setProperty("Theme", "default.theme");
+
+        for (Player player : players.values())
+        {
+            properties.setProperty(
+                    String.format("id:%s", player.id()),
+                    player.point().toStringPlain()
+            );
+        }
+
+        return properties;
+    }
+
+    public File getLayoutFile()
     {
         File file = new File("test.layout");
 
         file.deleteOnExit();
 
-        Properties layout = layout();
+        Properties layout = getLayout();
 
         try
         {
             layout.store(
                     new BufferedOutputStream(new FileOutputStream(file)),
                     "Test Layout"
+            );
+        }
+
+        catch (IOException e) { }
+
+        return file;
+    }
+
+    public File getSessionFile()
+    {
+        File file = new File("test.session");
+
+        file.deleteOnExit();
+
+        Properties session = getSession();
+
+        try
+        {
+            session.store(
+                    new BufferedOutputStream(new FileOutputStream(file)),
+                    "Test Session"
             );
         }
 
@@ -214,11 +263,17 @@ public class NewLevelTest
         {
             put(walls, new Point(0, i), Element.Kind.WALL);
 
-            put(walls, new Point(i, 0), Element.Kind.WALL);
+            if (i != 1 && i != 3)
+            {
+                put(walls, new Point(i, 0), Element.Kind.WALL);
+            }
 
             put(walls, new Point(dimension - 1, i), Element.Kind.WALL);
 
-            put(walls, new Point(i, dimension - 1), Element.Kind.WALL);
+            if (i != 1 && i != 3)
+            {
+                put(walls, new Point(i, dimension - 1), Element.Kind.WALL);
+            }
         }
     }
 
@@ -246,7 +301,7 @@ public class NewLevelTest
 
         put(keys, new Point(3, 3), Element.Kind.KEY);
 
-        put(keys, new Point(4, 4), Element.Kind.KEY);
+        put(keys, new Point(3, 1), Element.Kind.KEY);
     }
 
     @Before public void setUpStaticObstacles()
@@ -271,102 +326,152 @@ public class NewLevelTest
     {
         mysteryBoxes = new HashMap<>();
 
-        put(mysteryBoxes, new Point(0, 1), Element.Kind.MYSTERY_BOX);
+        put(mysteryBoxes, new Point(1, 1), Element.Kind.MYSTERY_BOX);
 
-        put(mysteryBoxes, new Point(0, 2), Element.Kind.MYSTERY_BOX);
+        put(mysteryBoxes, new Point(1, 3), Element.Kind.MYSTERY_BOX);
+    }
+
+    @Before public void setUpScreen()
+    {
+        screen = new GUIScreen(new Screen(TerminalFacade.createTerminal()));
     }
 
     @Test public void testSessionConstructorConstructsWellFromFile() throws IOException
     {
-        File file = file();
+        File file = getSessionFile();
 
-        Level level = new Level(file, profiles);
+        Level level = new Level(file, profiles, screen);
 
-        /*
-        assertThat(level.playerMap(), is(players));
-        assertThat(level.wallMap(), is(walls));
-        assertThat(level.entranceMap(), is(entrances));
-        assertThat(level.exitMap(), is(exits));
-        assertThat(level.keyMap(), is(keys));
-        assertThat(level.staticObstacleMap(), is(staticObstacles));
-        assertThat(level.dynamicObstacleMap(), is(dynamicObstacles));
-        assertThat(level.mysteryBoxMap(), is(mysteryBoxes));
+        assertEquals(level.players(), players.values());
 
-        */
+        Page page = level.currentPage();
+
+        assertEquals(page.walls(), walls.values());
+        assertEquals(page.entrances(), entrances.values());
+        assertEquals(page.exits(), exits.values());
+        assertEquals(page.keys(), keys.values());
+        assertEquals(page.staticObstacles(), staticObstacles.values());
+        assertEquals(page.dynamicObstacles(), dynamicObstacles.values());
+        assertEquals(page.mysteryBoxes(), mysteryBoxes.values());
+
         assert(file.delete());
     }
 
     @Test public void testSessionConstructorConstructsWellFromProperties()
     {
-        Level level = new Level(layout(), profiles);
+        Level level = new Level(getSession(), profiles, screen);
 
-        /*
-        assertThat(level.playerMap(), is(players));
-        assertThat(level.wallMap(), is(walls));
-        assertThat(level.entranceMap(), is(entrances));
-        assertThat(level.exitMap(), is(exits));
-        assertThat(level.keyMap(), is(keys));
-        assertThat(level.staticObstacleMap(), is(staticObstacles));
-        assertThat(level.dynamicObstacleMap(), is(dynamicObstacles));
-        assertThat(level.mysteryBoxMap(), is(mysteryBoxes));
-        */
+        Page page = level.currentPage();
+
+        assertEquals(level.players(), players.values());
+
+        assertEquals(level.currentPage().walls(), walls.values());
+        assertEquals(page.entrances(), entrances.values());
+        assertEquals(page.exits(), exits.values());
+        assertEquals(page.keys(), keys.values());
+        assertEquals(page.staticObstacles(), staticObstacles.values());
+        assertEquals(page.dynamicObstacles(), dynamicObstacles.values());
+        assertEquals(page.mysteryBoxes(), mysteryBoxes.values());
     }
 
     @Test public void testLayoutThemeConstructor()
     {
-        Level level = new Level(layout(), theme, profiles);
+        Level level = new Level("Level", getLayout(), theme, profiles, screen);
 
-        /*
-        assertThat(level.playerMap(), is(players));
-        assertThat(level.wallMap(), is(walls));
-        assertThat(level.entranceMap(), is(entrances));
-        assertThat(level.exitMap(), is(exits));
-        assertThat(level.keyMap(), is(keys));
-        assertThat(level.staticObstacleMap(), is(staticObstacles));
-        assertThat(level.dynamicObstacleMap(), is(dynamicObstacles));
-        assertThat(level.mysteryBoxMap(), is(mysteryBoxes));
-        */
+        Page page = level.currentPage();
+
+        assertEquals(level.players(), players.values());
+
+        assertEquals(page.walls(), walls.values());
+        assertEquals(page.entrances(), entrances.values());
+        assertEquals(page.exits(), exits.values());
+        assertEquals(page.keys(), keys.values());
+        assertEquals(page.staticObstacles(), staticObstacles.values());
+        assertEquals(page.dynamicObstacles(), dynamicObstacles.values());
+        assertEquals(page.mysteryBoxes(), mysteryBoxes.values());
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromFileThrowsForEmptyProfiles() throws IOException
     {
-        new Level(file(), new ArrayList<>());
+        new Level(getSessionFile(), new ArrayList<>(), screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromFileThrowsForNullProfiles() throws IOException
     {
-        new Level(file(), null);
+        new Level(getSessionFile(), null, screen);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testSessionConstructorConstructingFromFileThrowsForNullScreen() throws IOException
+    {
+        new Level(getSessionFile(), profiles, null);
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromPropertiesThrowsForEmptyProfiles()
     {
-        new Level(layout(), new ArrayList<>());
+        new Level(getSession(), new ArrayList<>(), screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromPropertiesThrowsForNullProfiles()
     {
-        new Level(layout(), null);
+        new Level(getSession(), null, screen);
     }
 
     @Test(expected=AssertionError.class)
-    public void testLayoutThemeConstructorThrowsForEmptyProfiles()
+    public void testSessionConstructorConstructingFromPropertiesThrowsForNullScreen()
     {
-        new Level(layout(), theme, new ArrayList<>());
+        new Level(getSession(), profiles, null);
     }
 
     @Test(expected=AssertionError.class)
-    public void testLayoutThemeConstructorThrowsForNullTheme()
+    public void testLayoutThemeConstructorConstructingFromPropertiesThrowsForEmptyProfiles()
     {
-        new Level(layout(), null, new ArrayList<>());
+        new Level("Level", getLayout(), theme, new ArrayList<>(), screen);
     }
 
     @Test(expected=AssertionError.class)
-    public void testLayoutThemeConstructorThrowsForNullProfiles()
+    public void testLayoutThemeConstructorConstructingFromPropertiesThrowsForNullTheme()
     {
-        new Level(layout(), null, null);
+        new Level("Level", getLayout(), null, profiles, screen);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testLayoutThemeConstructorFromPropertiesThrowsForNullProfiles()
+    {
+        new Level("Level", getLayout(), theme, null, screen);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testLayoutThemeConstructorFromPropertiesThrowsForNullScreen()
+    {
+        new Level("Level", getLayout(), theme, profiles, null);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testLayoutThemeConstructorConstructingFromFileThrowsForEmptyProfiles() throws IOException
+    {
+        new Level(getLayoutFile(), theme, new ArrayList<>(), screen);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testLayoutThemeConstructorConstructingFromFileThrowsForNullTheme() throws IOException
+    {
+        new Level(getLayoutFile(), null, profiles, screen);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testLayoutThemeConstructorFromFileThrowsForNullProfiles() throws IOException
+    {
+        new Level(getLayoutFile(), theme, null, screen);
+    }
+
+    @Test(expected=AssertionError.class)
+    public void testLayoutThemeConstructorFromFileThrowsForNullScreen() throws IOException
+    {
+        new Level(getLayoutFile(), theme, profiles, null);
     }
 }

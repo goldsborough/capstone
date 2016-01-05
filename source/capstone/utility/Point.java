@@ -3,11 +3,16 @@ package capstone.utility;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Point extends Pair<Integer> implements Comparable<Point>
+public class Point
+        extends AbstractPair<Integer, Integer>
+        implements Comparable<Point>
 {
     public Point(int first, int second)
     {
         super(first, second);
+
+        assert(first  >= 0);
+        assert(second >= 0);
     }
 
     public Point(Point other)
@@ -21,6 +26,9 @@ public class Point extends Pair<Integer> implements Comparable<Point>
 
         assert(matcher.matches());
 
+        // No idea why I have to call it twice. None.
+        matcher.matches();
+
         this.x(Integer.parseInt(matcher.group(1)));
         this.y(Integer.parseInt(matcher.group(2)));
     }
@@ -29,7 +37,7 @@ public class Point extends Pair<Integer> implements Comparable<Point>
     {
         assert(y() > 0);
 
-        return new Point(x(), y()- 1);
+        return new Point(x(), y() - 1);
     }
 
     public Point below()
@@ -75,11 +83,11 @@ public class Point extends Pair<Integer> implements Comparable<Point>
 
     public Point move(int dx, int dy)
     {
-        assert(_first + dx >= 0);
+        assert(_first  + dx >= 0);
         assert(_second + dy >= 0);
 
-        _first += dx;
-        _first += dy;
+        first(_first + dx);
+        second(_second + dy);
 
         return this;
     }
@@ -97,6 +105,6 @@ public class Point extends Pair<Integer> implements Comparable<Point>
     }
 
     private static final Pattern _pattern = Pattern.compile(
-            "[^\\d]*(\\d+)[^\\d]*(\\d+)[^\\d]*"
+            "[^\\d]*(\\d+)[^\\d]+(\\d+)[^\\d]*"
     );
 }

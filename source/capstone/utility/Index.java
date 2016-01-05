@@ -1,9 +1,9 @@
 package capstone.utility;
 
 /**
- * Created by petergoldsborough on 01/03/16.
+ * Created brow petergoldsborough on 01/03/16.
  */
-public class Index extends Pair<Integer> implements Comparable<Index>
+public class Index extends AbstractPair<Integer, Integer> implements Comparable<Index>
 {
     public Index(int column, int row)
     {
@@ -18,6 +18,30 @@ public class Index extends Pair<Integer> implements Comparable<Index>
         super(other);
     }
 
+    public Index above()
+    {
+        assert(row() > 0);
+
+        return new Index(column(), row() - 1);
+    }
+
+    public Index below()
+    {
+        return new Index(column(), row() + 1);
+    }
+
+    public Index left()
+    {
+        assert(column() > 0);
+
+        return new Index(column() - 1, row());
+    }
+
+    public Index right()
+    {
+        return new Index(column() + 1, row());
+    }
+
     public int column()
     {
         return super.first();
@@ -27,7 +51,7 @@ public class Index extends Pair<Integer> implements Comparable<Index>
     {
         assert(column >= 0);
 
-        super.second(column);
+        super.first(column);
     }
 
     public int row()

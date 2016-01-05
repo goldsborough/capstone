@@ -46,11 +46,11 @@ public class DynamicObstacleTest
         assertThat(obstacle.point(), is(not(oldPoint)));
     }
 
-    @Test public void testUpdateDoesNotModifyPositionWhenGoingOutOfBounds()
+    @Test public void testSafeUpdateDoesNotModifyPositionWhenGoingOutOfBounds()
     {
         obstacle.point(new Point(0, 0));
 
-        obstacle.update(1, 1);
+        obstacle.safeUpdate(1, 1);
 
         assertThat(obstacle.point(), is(new Point(0, 0)));
     }

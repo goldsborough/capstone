@@ -1,6 +1,6 @@
 package capstone.utility;
 
-public class Delta extends Pair<Integer> implements Comparable<Delta>
+public class Delta extends AbstractPair<Integer, Integer> implements Comparable<Delta>
 {
     public static Delta Up()
     {

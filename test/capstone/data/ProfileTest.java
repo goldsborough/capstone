@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
 import capstone.element.Player;
+import capstone.ui.InputKey;
 import capstone.utility.KeyMap;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -88,22 +89,22 @@ public class ProfileTest
     @Test public void testDirection()
     {
         assertThat(
-                profile.direction(new Key(Key.Kind.ArrowUp)),
+                profile.direction(new InputKey(Key.Kind.ArrowUp)),
                 is(Player.Direction.UP)
         );
 
         assertThat(
-                profile.direction(new Key(Key.Kind.ArrowDown)),
+                profile.direction(new InputKey(Key.Kind.ArrowDown)),
                 is(Player.Direction.DOWN)
         );
 
         assertThat(
-                profile.direction(new Key(Key.Kind.ArrowLeft)),
+                profile.direction(new InputKey(Key.Kind.ArrowLeft)),
                 is(Player.Direction.LEFT)
         );
 
         assertThat(
-                profile.direction(new Key(Key.Kind.ArrowRight)),
+                profile.direction(new InputKey(Key.Kind.ArrowRight)),
                 is(Player.Direction.RIGHT)
         );
     }

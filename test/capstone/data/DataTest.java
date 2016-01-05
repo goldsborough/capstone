@@ -28,6 +28,11 @@ class MockData extends Data
         this.s = s;
     }
 
+    @Override public void store() throws IOException
+    {
+        super.store(new File("."));
+    }
+
     @Override public void deserialize(Properties serialization)
     {
         assert(serialization.containsKey("x"));
@@ -106,7 +111,6 @@ public class DataTest
 
         mock.store();
 
-
         File file = new File(mock.fileName());
 
         Properties serialization = new Properties();
@@ -130,6 +134,7 @@ public class DataTest
 
         mock.store(file);
 
+        file = new File(file, mock.fileName());
 
         Properties serialization = new Properties();
 
@@ -176,11 +181,11 @@ public class DataTest
 
         properties.setProperty("key", "value");
 
-        assert(properties.contains("key"));
+        assert(properties.containsKey("key"));
 
         Data.pop(properties, "key");
 
-        assertFalse(properties.contains("key"));
+        assertFalse(properties.containsKey("key"));
 
     }
 

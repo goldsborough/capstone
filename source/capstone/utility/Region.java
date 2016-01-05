@@ -3,7 +3,7 @@ package capstone.utility;
 /**
  * Created by petergoldsborough on 01/03/16.
  */
-public class Region extends Pair<Point>
+public class Region extends AbstractPair<Point, Point>
 {
     public enum Vertical { SOUTH, NORTH }
 
@@ -13,7 +13,8 @@ public class Region extends Pair<Point>
     {
         super(southWest, northEast);
 
-        assert(southWest.compareTo(northEast) == -1);
+        assert(southWest.x() <= northEast.x());
+        assert(southWest.y() >= northEast.y());
     }
 
     public Region(int southWestX,
@@ -39,32 +40,49 @@ public class Region extends Pair<Point>
 
     public void southWest(Point southWest)
     {
-        assert(southWest.compareTo(northEast()) == -1);
+        assert(southWest.x() <= northEast().x());
+        assert(southWest.y() >= northEast().y());
 
-        super.second(southWest);
+        super.first(southWest);
+
+        _invalidate();
     }
 
     public Point southEast()
     {
-        return new Point(northEast().x(), southWest().y());
+        if (_southEast == null)
+        {
+            _southEast = new Point(northEast().x(), southWest().y());
+        }
+
+        return _southEast;
     }
 
     public void southEast(Point southEast)
     {
         southWest(new Point(_first.x(), southEast.y()));
         northEast(new Point(southEast.x(), _second.y()));
+
+        _southEast = southEast;
     }
 
 
     public Point northWest()
     {
-        return new Point(southWest().x(), northEast().y());
+        if (_northWest == null)
+        {
+            _northWest = new Point(southWest().x(), northEast().y());
+        }
+
+        return _northWest;
     }
 
     public void northWest(Point northWest)
     {
         southWest(new Point(northWest.x(), _first.y()));
         northEast(new Point(_second.x(), northWest.y()));
+
+        _northWest = northWest;
     }
 
     public Point northEast()
@@ -74,19 +92,32 @@ public class Region extends Pair<Point>
 
     public void northEast(Point northEast)
     {
-        assert(northEast.compareTo(southWest()) == +1);
+        assert(southWest().x() <= northEast.x());
+        assert(southWest().y() >= northEast.y());
 
         super.second(northEast);
+
+        _invalidate();
     }
 
     public int height()
     {
-        return southWest().y() - northEast().y();
+        return southWest().y() - northEast().y() + 1;
     }
 
     public int width()
     {
-        return northEast().x() - southWest().x();
+        return northEast().x() - southWest().x() + 1;
+    }
+
+    public int area()
+    {
+        return height() * width();
+    }
+
+    public int circumference()
+    {
+        return 2 * height() + 2 * width();
     }
 
     public Point at(Vertical vertical, Horizontal horizontal)
@@ -112,10 +143,19 @@ public class Region extends Pair<Point>
 
         if (point.x() > northEast().x()) return false;
 
-        if (point.y() < southWest().y()) return false;
+        if (point.y() > southWest().y()) return false;
 
-        if (point.y() > northEast().y()) return false;
+        if (point.y() < northEast().y()) return false;
 
         return true;
     }
+
+    private void _invalidate()
+    {
+        _southEast = null;
+        _northWest = null;
+    }
+
+    private Point _southEast;
+    private Point _northWest;
 }

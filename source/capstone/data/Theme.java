@@ -43,6 +43,11 @@ public class Theme extends Data implements Iterable<Map.Entry<Element.Kind, Repr
         _representations = new HashMap<>(map);
     }
 
+    @Override public void store() throws IOException
+    {
+        super.store(new File("resources/themes"));
+    }
+
     @Override public void deserialize(Properties serialization)
     {
         _representations.clear();

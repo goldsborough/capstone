@@ -3,6 +3,7 @@ package capstone.ui;
 import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.Container;
+import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.EmptySpace;
@@ -21,6 +22,15 @@ import java.io.File;
  */
 public class Widget extends Window implements Component
 {
+    public static void showIOErrorBox(GUIScreen owner)
+    {
+        MessageBox.showMessageBox(
+                owner,
+                "I/O Error",
+                "Could not perform I/O Operation :("
+        );
+    }
+
     public Widget()
     {
         this("", Panel.Orientation.VERTICAL);
@@ -214,15 +224,6 @@ public class Widget extends Window implements Component
         return slot;
     }
 
-    protected void _showIOErrorBox()
-    {
-        MessageBox.showMessageBox(
-                getOwner(),
-                "I/O Error",
-                "Could not perform I/O Operation :("
-        );
-    }
-
     protected void _createBottomButtons(boolean vertical)
     {
         add(new ButtonSlot(
@@ -239,6 +240,11 @@ public class Widget extends Window implements Component
                 new File(path),
                 "Choose " + what
         );
+    }
+
+    protected void _showIOErrorBox()
+    {
+        Widget.showIOErrorBox(getOwner());
     }
 
 

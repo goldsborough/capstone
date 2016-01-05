@@ -26,6 +26,12 @@ public class NewPageTest
 
     private Representation representation;
 
+    public <T, U> void assertEquals(Collection<T> first, Collection<U> second)
+    {
+        assertTrue(first.containsAll(second));
+        assertTrue(second.containsAll(first));
+    }
+
     @Before public void setUp()
     {
         representation = new Representation(
@@ -38,9 +44,10 @@ public class NewPageTest
 
     @Test public void testNonCollectionConstructor()
     {
-        page = new Page(new Region(0, 0, 1, 1));
+        page = new Page(new Region(0, 1, 1, 0));
 
         assertTrue(page.isEmpty());
+        assertFalse(page.isFull());
         assertThat(page.size(), is(0));
 
         assertTrue(page.elements().isEmpty());
@@ -55,12 +62,12 @@ public class NewPageTest
                 new Exit(new Point(0, 1), representation)
         );
 
-        page = new Page(new Region(0, 0, 1, 1), elements);
+        page = new Page(new Region(0, 1, 1, 0), elements);
 
         assertFalse(page.isEmpty());
         assertThat(page.size(), is(2));
 
-        assertThat(page.elements(), is(elements));
+        assertEquals(page.elements(), elements);
     }
 
     @Test(expected=AssertionError.class)
@@ -79,5 +86,35 @@ public class NewPageTest
     public void testCollectionConstructorThrowsForNullCollection()
     {
         page = new Page(new Region(0, 0, 1, 1), null);
+    }
+
+    @Test public void testIsFull()
+    {
+        Collection<Element> elements = Arrays.asList(
+                new Wall(new Point(0, 0), representation),
+                new Exit(new Point(0, 1), representation),
+                new Wall(new Point(1, 0), representation),
+                new Exit(new Point(1, 1), representation)
+        );
+
+        page = new Page(new Region(0, 1, 1, 0), elements);
+
+        assertTrue(page.isFull());
+    }
+
+    @Test public void testFreePointReturnsNullWhenFull()
+    {
+        Collection<Element> elements = Arrays.asList(
+                new Wall(new Point(0, 0), representation),
+                new Exit(new Point(0, 1), representation),
+                new Wall(new Point(1, 0), representation),
+                new Exit(new Point(1, 1), representation)
+        );
+
+        page = new Page(new Region(0, 1, 1, 0), elements);
+
+        assert(page.isFull());
+
+        assertNull(page.freePoint());
     }
 }

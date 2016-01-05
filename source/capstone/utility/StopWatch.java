@@ -10,7 +10,14 @@ public class StopWatch
 
     public StopWatch(long timeout)
     {
+        this(timeout, false);
+    }
+
+    public StopWatch(long timeout, boolean start)
+    {
         this.timeout(timeout);
+
+        if (start) start();
     }
 
     public StopWatch(boolean start)
@@ -24,14 +31,14 @@ public class StopWatch
 
         _running = true;
 
-        _start = now();
+        _start = _now();
     }
 
     public void stop()
     {
         assert(isRunning());
 
-        _end = now();
+        _end = _now();
 
         _running = false;
     }
@@ -40,7 +47,7 @@ public class StopWatch
     {
         assert(isRunning());
 
-        _pauseStart = now();
+        _pauseStart = _now();
 
         _paused = true;
     }
@@ -49,7 +56,7 @@ public class StopWatch
     {
         assert(isPaused());
 
-        _pausedTime += now() - _pauseStart;
+        _pausedTime += _now() - _pauseStart;
 
         _paused = false;
     }
@@ -58,7 +65,7 @@ public class StopWatch
     {
         assert(isRunning());
 
-        _start = now();
+        _start = _now();
     }
 
     public long timeout()
@@ -87,7 +94,7 @@ public class StopWatch
 
     public Long nanoseconds()
     {
-        return (now() - _start) - _pausedTime;
+        return (_now() - _start) - _pausedTime;
     }
 
     public Double microseconds()
@@ -140,7 +147,7 @@ public class StopWatch
         return _pausedTime > 0 && ! _paused;
     }
 
-    private long now()
+    private long _now()
     {
         return _running ? System.nanoTime() : _end;
     }
