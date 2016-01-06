@@ -410,6 +410,8 @@ public class LevelBuilder extends Data
     public LevelBuilder totalKeys(int totalKeys)
     {
         _totalKeys = totalKeys;
+
+        return LevelBuilder;
     }
 
     /**
