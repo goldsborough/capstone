@@ -1,5 +1,6 @@
 package capstone.utility;
 
+import capstone.element.Direction;
 import capstone.element.Player;
 import capstone.ui.InputKey;
 
@@ -113,10 +114,10 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.Arrows();
 
-        map.set(new InputKey('a'), Player.Direction.UP);
-        map.set(new InputKey('b'), Player.Direction.DOWN);
-        map.set(new InputKey(InputKey.Kind.Delete), Player.Direction.LEFT);
-        map.set(new InputKey(InputKey.Kind.Insert), Player.Direction.RIGHT);
+        map.set(new InputKey('a'), Direction.UP);
+        map.set(new InputKey('b'), Direction.DOWN);
+        map.set(new InputKey(InputKey.Kind.Delete), Direction.LEFT);
+        map.set(new InputKey(InputKey.Kind.Insert), Direction.RIGHT);
 
         assertThat(map.up(), is(new InputKey('a')));
         assertThat(map.down(), is(new InputKey('b')));
@@ -128,10 +129,10 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.Arrows();
 
-        map.set(Player.Direction.UP, new InputKey('a'));
-        map.set(Player.Direction.DOWN, new InputKey('b'));
-        map.set(Player.Direction.LEFT, new InputKey(InputKey.Kind.Delete));
-        map.set(Player.Direction.RIGHT, new InputKey(InputKey.Kind.Insert));
+        map.set(Direction.UP, new InputKey('a'));
+        map.set(Direction.DOWN, new InputKey('b'));
+        map.set(Direction.LEFT, new InputKey(InputKey.Kind.Delete));
+        map.set(Direction.RIGHT, new InputKey(InputKey.Kind.Insert));
 
         assertThat(map.up(), is(new InputKey('a')));
         assertThat(map.down(), is(new InputKey('b')));
@@ -168,16 +169,16 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.WASD();
 
-        HashMap<InputKey, Player.Direction> expected = new HashMap<>();
+        HashMap<InputKey, Direction> expected = new HashMap<>();
 
-        expected.put(new InputKey('w'), Player.Direction.UP);
-        expected.put(new InputKey('s'), Player.Direction.DOWN);
-        expected.put(new InputKey('a'), Player.Direction.LEFT);
-        expected.put(new InputKey('d'), Player.Direction.RIGHT);
+        expected.put(new InputKey('w'), Direction.UP);
+        expected.put(new InputKey('s'), Direction.DOWN);
+        expected.put(new InputKey('a'), Direction.LEFT);
+        expected.put(new InputKey('d'), Direction.RIGHT);
 
-        HashMap<InputKey, Player.Direction> result = new HashMap<>();
+        HashMap<InputKey, Direction> result = new HashMap<>();
 
-        for (Map.Entry<InputKey, Player.Direction> entry : map)
+        for (Map.Entry<InputKey, Direction> entry : map)
         {
             result.put(entry.getKey(), entry.getValue());
         }
@@ -189,16 +190,16 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.WASD();
 
-        HashMap<Player.Direction, InputKey> expected = new HashMap<>();
+        HashMap<Direction, InputKey> expected = new HashMap<>();
 
-        expected.put(Player.Direction.UP, new InputKey('w'));
-        expected.put(Player.Direction.DOWN, new InputKey('s'));
-        expected.put(Player.Direction.LEFT, new InputKey('a'));
-        expected.put(Player.Direction.RIGHT, new InputKey('d'));
+        expected.put(Direction.UP, new InputKey('w'));
+        expected.put(Direction.DOWN, new InputKey('s'));
+        expected.put(Direction.LEFT, new InputKey('a'));
+        expected.put(Direction.RIGHT, new InputKey('d'));
 
-        HashMap<Player.Direction, InputKey> result = new HashMap<>();
+        HashMap<Direction, InputKey> result = new HashMap<>();
 
-        for (Map.Entry<Player.Direction, InputKey> entry : map.backward())
+        for (Map.Entry<Direction, InputKey> entry : map.backward())
         {
             result.put(entry.getKey(), entry.getValue());
         }
@@ -210,16 +211,16 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.WASD();
 
-        HashMap<InputKey, Player.Direction> expected = new HashMap<>();
+        HashMap<InputKey, Direction> expected = new HashMap<>();
 
-        expected.put(new InputKey('w'), Player.Direction.UP);
-        expected.put(new InputKey('s'), Player.Direction.DOWN);
-        expected.put(new InputKey('a'), Player.Direction.LEFT);
-        expected.put(new InputKey('d'), Player.Direction.RIGHT);
+        expected.put(new InputKey('w'), Direction.UP);
+        expected.put(new InputKey('s'), Direction.DOWN);
+        expected.put(new InputKey('a'), Direction.LEFT);
+        expected.put(new InputKey('d'), Direction.RIGHT);
 
-        HashMap<InputKey, Player.Direction> result = new HashMap<>();
+        HashMap<InputKey, Direction> result = new HashMap<>();
 
-        for (Map.Entry<InputKey, Player.Direction> entry : map.forward())
+        for (Map.Entry<InputKey, Direction> entry : map.forward())
         {
             result.put(entry.getKey(), entry.getValue());
         }
@@ -248,14 +249,14 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.Arrows();
 
-        HashSet<Player.Direction> expected = new HashSet<>();
+        HashSet<Direction> expected = new HashSet<>();
 
-        expected.add(Player.Direction.UP);
-        expected.add(Player.Direction.DOWN);
-        expected.add(Player.Direction.LEFT);
-        expected.add(Player.Direction.RIGHT);
+        expected.add(Direction.UP);
+        expected.add(Direction.DOWN);
+        expected.add(Direction.LEFT);
+        expected.add(Direction.RIGHT);
 
-        for (Player.Direction direction : map.directions())
+        for (Direction direction : map.directions())
         {
             assertTrue(expected.contains(direction));
         }
@@ -265,7 +266,7 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.WASD();
 
-        map.set(new InputKey('w'), Player.Direction.LEFT);
+        map.set(new InputKey('w'), Direction.LEFT);
     }
 
     @Test(expected=AssertionError.class)
@@ -273,7 +274,7 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.WASD();
 
-        map.set(Player.Direction.LEFT, new InputKey('w'));
+        map.set(Direction.LEFT, new InputKey('w'));
     }
 
     @Test public void testToString()

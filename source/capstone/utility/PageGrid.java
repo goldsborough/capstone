@@ -37,9 +37,17 @@ public class PageGrid
     public PageGrid(LevelSize levelSize,
                     TerminalSize terminalSize)
     {
+        assert(levelSize != null);
+        assert(terminalSize != null);
+
         _grid = new ArrayList<>();
 
-        resize(levelSize, terminalSize);
+        _levelSize = levelSize;
+        _terminalSize = terminalSize;
+
+        _dimensions = _computeDimensions(levelSize, terminalSize);
+
+        _redistribute(_grid, _newGrid(_dimensions, terminalSize));
 
         _currentIndex = new Index(0, 0);
     }
@@ -115,12 +123,11 @@ public class PageGrid
 
         Element element = page.at(location.point());
 
-        if (element != null)
-        {
-            page.remove(element);
+        assert(element != null);
 
-            --_numberOfElements;
-        }
+        page.remove(element);
+
+        --_numberOfElements;
 
         return element;
     }
@@ -163,11 +170,16 @@ public class PageGrid
 
     public Location findFreeSpace()
     {
+        Region level = new Region(
+                _levelSize.getColumns() - 1, // size is not not inclusive
+                _levelSize.getRows()    - 1  // but a region is
+        );
+
         for (int row = 0; row < height(); ++row)
         {
             for (int column = 0; column < width(); ++column)
             {
-                Point point = get(column, row).freePoint();
+                Point point = get(column, row).freePoint(level);
 
                 if (point != null)
                 {
@@ -358,18 +370,14 @@ public class PageGrid
     {
         assert(terminalSize != null);
 
-        Dimensions dimensions =
-                _computeDimensions(levelSize, terminalSize);
-
         _levelSize = levelSize;
         _terminalSize = terminalSize;
 
-        // Critical optimization!
-        if (! dimensions.equals(_dimensions))
+        if (_greater(_levelSize, _terminalSize))
         {
-            _dimensions = dimensions;
+            _dimensions = _computeDimensions(levelSize, terminalSize);
 
-            _redistribute(_grid, _newGrid(dimensions, terminalSize));
+            _redistribute(_grid, _newGrid(_dimensions, terminalSize));
         }
     }
 
@@ -767,6 +775,15 @@ public class PageGrid
         }
 
         return page;
+    }
+
+    private boolean _greater(LevelSize levelSize, TerminalSize terminalSize)
+    {
+        if (levelSize.getColumns() > terminalSize.getColumns()) return true;
+
+        if (levelSize.getRows() > terminalSize.getRows()) return true;
+
+        return false;
     }
 
     private LevelSize _levelSize;

@@ -1,87 +1,59 @@
 package capstone.element;
 
-import capstone.utility.Pattern;
+import capstone.utility.Delta;
 import capstone.utility.Point;
 import capstone.data.Representation;
+import capstone.utility.Region;
 
 import java.util.Random;
+import java.util.Set;
 
-public class DynamicObstacle extends Element
+public abstract class DynamicObstacle extends Element
 {
+    public static DynamicObstacle Random(Point point, Representation representation)
+    {
+        switch (_random.nextInt(3))
+        {
+            case 0: return new PatternObstacle   (point, representation);
+            case 1: return new RandomizedObstacle(point, representation);
+            case 2: return new SequentialObstacle(point, representation);
+        }
+
+        throw new AssertionError();
+    }
+
     public DynamicObstacle (Point point, Representation representation)
     {
         super(Kind.DYNAMIC_OBSTACLE, point, representation);
-
-        _pattern = _randomPattern();
     }
 
-    public void update()
+    public Point update(Region region, Set<Point> taken)
     {
-        _pattern.next(_point);
+        return _point = peekPoint(region, taken);
     }
 
-    public void safeUpdate(int rightBoundary, int bottomBoundary)
+    public Delta peekDelta(Region region, Set<Point> taken)
     {
-        _pattern.safeNext(_point, rightBoundary, bottomBoundary);
+        if (taken.size() == region.area()) return Delta.Stay();
+
+        return _next(region, taken);
     }
 
-    public Pattern pattern()
+    public Point peekPoint(Region region, Set<Point> taken)
     {
-        return _pattern;
+        return new Point(_point).move(peekDelta(region, taken));
     }
 
-    public void changePattern()
+    protected abstract Delta _next(Region region, Set<Point> taken);
+
+    protected boolean _valid(Delta delta, Region region, Set<Point> taken)
     {
-        Pattern old = _pattern;
+        if (_point.wouldGoOutside(delta, region)) return false;
 
-        do _pattern = _randomPattern();
+        Point next = new Point(_point).move(delta);
 
-        while (_pattern == old);
+        return ! taken.contains(next);
     }
-
-    public Point peek()
-    {
-        assert(_pattern != null);
-
-        return new Point(_point).move(_pattern.peek());
-    }
-
-    public void skip()
-    {
-        assert(_pattern != null);
-
-        _pattern.skip();
-    }
-
-    public void goBack()
-    {
-        assert(_pattern != null);
-
-        _pattern.previous(_point);
-    }
-
-    private Pattern _randomPattern()
-    {
-        Pattern pattern = _patternPool[_random.nextInt(_patternPool.length)];
-
-        assert(pattern != null);
-
-        return pattern;
-    }
-
-    private static Pattern[] _patternPool = {
-        new Pattern("l2rl"),
-        new Pattern("2r2l"),
-        new Pattern("3r3l"),
-        new Pattern("4r4l"),
-        new Pattern("5r5l"),
-        new Pattern("urdruldl"),
-        new Pattern("(+1,-1)(+1,+1)(-1,-1)(-1,+1)"), // ^
-        new Pattern("(+1,-1)(+1,+1)(-1,+1)(-1,-1)"), // diamond
-        new Pattern("(+1,-1)(+1,+1)(+1,-1)(+1,+1)(-1,-1)(-1,+1)(-1,-1)(-1,+1)") // ^^
-    };
 
     private static Random _random = new Random();
-
-    private Pattern _pattern;
 }

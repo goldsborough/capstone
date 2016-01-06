@@ -2,7 +2,7 @@ package capstone.utility;
 
 import capstone.data.Profile;
 import capstone.data.Representation;
-import capstone.element.DynamicObstacle;
+import capstone.element.SequentialObstacle;
 import capstone.element.Element;
 import capstone.element.Exit;
 import capstone.element.Wall;
@@ -104,14 +104,14 @@ public class ExistingPageTest
         assertFalse(page.contains(new Wall(new Point(10, 10), representation)));
     }
 
-    @Test public void testUpdateChangesDynamicObstaclePositions()
+    @Test public void testUpdateChangesSequentialObstaclePositions()
     {
-        DynamicObstacle first = new DynamicObstacle(
+        SequentialObstacle first = new SequentialObstacle(
                 new Point(10, 10),
                 representation
         );
 
-        DynamicObstacle second = new DynamicObstacle(
+        SequentialObstacle second = new SequentialObstacle(
                 new Point(5, 5),
                 representation
         );
@@ -119,7 +119,7 @@ public class ExistingPageTest
         page.add(first);
         page.add(second);
 
-        Map<DynamicObstacle, Point> previous = new HashMap<>();
+        Map<SequentialObstacle, Point> previous = new HashMap<>();
 
         previous.put(first, new Point(first.point()));
         previous.put(second, new Point(second.point()));
@@ -127,7 +127,7 @@ public class ExistingPageTest
         page.update();
 
         // All positions should have changed
-        for (Map.Entry<DynamicObstacle, Point> entry : previous.entrySet())
+        for (Map.Entry<SequentialObstacle, Point> entry : previous.entrySet())
         {
             assertThat(entry.getKey().point(), is(not(entry.getValue())));
         }
@@ -372,7 +372,7 @@ public class ExistingPageTest
 
     @Test public void testFreePoint()
     {
-        Point free = page.freePoint();
+        Point free = page.freePoint(page.region());
 
         assertFalse(page.hasAt(free));
     }

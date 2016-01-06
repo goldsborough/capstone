@@ -13,13 +13,7 @@ public abstract class Data implements Serializable
     {
         assert(file != null);
 
-        InputStream input = new BufferedInputStream(new FileInputStream(file));
-
-        Properties serialization = new Properties();
-
-        serialization.load(input);
-
-        deserialize(serialization);
+        deserialize(_load(file));
     }
 
     public abstract void deserialize(Properties serialization);
@@ -62,5 +56,21 @@ public abstract class Data implements Serializable
         properties.remove(key);
 
         return value;
+    }
+
+    protected static Properties _load(File file) throws IOException
+    {
+        Properties session = new Properties();
+
+        session.load(new BufferedInputStream(new FileInputStream(file)));
+
+        return session;
+    }
+
+    protected static String _getName(File file)
+    {
+        String filename = file.getName();
+
+        return filename.substring(0, filename.lastIndexOf('.'));
     }
 }

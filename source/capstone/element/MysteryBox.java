@@ -5,7 +5,6 @@ import capstone.data.Representation;
 import capstone.utility.Region;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
-import com.googlecode.lanterna.screen.Screen;
 
 import java.util.Random;
 
@@ -24,7 +23,7 @@ public class MysteryBox extends Element
         NEW_WALL("A new wall appears!"),
 
         REMOVE_DYNAMIC_OBSTACLE("A dynamic obstacle disappears!"),
-        REMOVE_STATIC_OBSTACLE("A dynamic obstacle disappears!"),
+        REMOVE_STATIC_OBSTACLE("A static obstacle disappears!"),
         LOSE_KEY("You lose a key!");
 
         public static Event Random()
@@ -62,6 +61,11 @@ public class MysteryBox extends Element
         private static final Random _random = new Random();
 
         private final String _message;
+    }
+
+    public static void showMessage(GUIScreen gui, String message)
+    {
+        MessageBox.showMessageBox(gui, "Mystery Message", message);
     }
 
     public MysteryBox(Point point, Representation representation)

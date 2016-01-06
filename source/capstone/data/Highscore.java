@@ -221,7 +221,7 @@ public class Highscore extends Data implements Iterable<Highscore.Entry>
         for (Map.Entry<Double, List<String>> entry : _map.entrySet())
         {
             properties.setProperty(
-                    String.format("%1$.3f s", entry.getKey()),
+                    String.format("%1$.3f", entry.getKey()),
                     String.join(", ", entry.getValue())
             );
         }

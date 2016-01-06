@@ -1,5 +1,6 @@
 package capstone.utility;
 
+import capstone.element.Direction;
 import capstone.element.Player;
 import capstone.ui.InputKey;
 import com.googlecode.lanterna.input.Key;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
+public class KeyMap implements Iterable<Map.Entry<InputKey, Direction>>
 {
     public static <K, V> HashMap<V, K> reverse(HashMap<K, V> forward)
     {
@@ -81,32 +82,35 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
         );
     }
 
-    public KeyMap(InputKey up, InputKey down, InputKey left, InputKey right)
+    public KeyMap(InputKey up,
+                  InputKey down,
+                  InputKey left,
+                  InputKey right)
     {
         _forward = new HashMap<>();
         _backward = new HashMap<>();
 
-        _forward.put(up, Player.Direction.UP);
-        _forward.put(down, Player.Direction.DOWN);
-        _forward.put(left, Player.Direction.LEFT);
-        _forward.put(right, Player.Direction.RIGHT);
+        _forward.put(up, Direction.UP);
+        _forward.put(down, Direction.DOWN);
+        _forward.put(left, Direction.LEFT);
+        _forward.put(right, Direction.RIGHT);
 
-        _backward.put(Player.Direction.UP, up);
-        _backward.put(Player.Direction.DOWN, down);
-        _backward.put(Player.Direction.LEFT, left);
-        _backward.put(Player.Direction.RIGHT, right);
+        _backward.put(Direction.UP, up);
+        _backward.put(Direction.DOWN, down);
+        _backward.put(Direction.LEFT, left);
+        _backward.put(Direction.RIGHT, right);
 
         assert(_forward.size() == 4);
         assert(_backward.size() == 4);
     }
 
-    public KeyMap(Map<InputKey, Player.Direction> forward)
+    public KeyMap(Map<InputKey, Direction> forward)
     {
         _forward = new HashMap<>(forward);
         _backward = reverse(_forward);
     }
 
-    public void set(InputKey key, Player.Direction direction)
+    public void set(InputKey key, Direction direction)
     {
         assert(_forward.size() == 4);  // injectivity
         assert(_backward.size() == 4); // surjectivity
@@ -123,7 +127,7 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
         assert(_backward.size() == 4);
     }
 
-    public void set(Player.Direction direction, InputKey key)
+    public void set(Direction direction, InputKey key)
     {
         set(key, direction);
     }
@@ -137,7 +141,7 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
         assert(_forward.containsKey(first));
         assert(_forward.containsKey(second));
 
-        Player.Direction temp = _forward.get(first);
+        Direction temp = _forward.get(first);
 
         _forward.put(first, _forward.get(second));
         _forward.put(second, temp);
@@ -153,70 +157,70 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
 
     public void up(InputKey key)
     {
-        set(key, Player.Direction.UP);
+        set(key, Direction.UP);
     }
 
     public InputKey up()
     {
-        return _backward.get(Player.Direction.UP);
+        return _backward.get(Direction.UP);
     }
 
     public void down(InputKey key)
     {
-        set(key, Player.Direction.DOWN);
+        set(key, Direction.DOWN);
     }
 
     public InputKey down()
     {
-        return _backward.get(Player.Direction.DOWN);
+        return _backward.get(Direction.DOWN);
     }
 
     public void left(InputKey key)
     {
-        set(key, Player.Direction.LEFT);
+        set(key, Direction.LEFT);
     }
 
     public InputKey left()
     {
-        return _backward.get(Player.Direction.LEFT);
+        return _backward.get(Direction.LEFT);
     }
 
     public void right(InputKey key)
     {
-        set(key, Player.Direction.RIGHT);
+        set(key, Direction.RIGHT);
     }
 
     public InputKey right()
     {
-        return _backward.get(Player.Direction.RIGHT);
+        return _backward.get(Direction.RIGHT);
     }
 
-    public Player.Direction get(InputKey key)
+    public Direction get(InputKey key)
     {
         return _forward.get(key);
     }
 
-    public Player.Direction get(Key key)
+    public Direction get(Key key)
     {
         return get(InputKey.fromKey(key));
     }
 
-    public InputKey get(Player.Direction direction)
+    public InputKey get(Direction direction)
     {
         return _backward.get(direction);
     }
 
-    public Iterator<Map.Entry<InputKey, Player.Direction>> iterator()
+    public Iterator<Map.Entry<InputKey, Direction>> iterator()
     {
         return forward().iterator();
     }
 
-    public Collection<Map.Entry<InputKey, Player.Direction>> forward()
+    public Collection<Map.Entry<InputKey, Direction>> forward()
     {
         return Collections.unmodifiableCollection(_forward.entrySet());
     }
 
-    public Collection<Map.Entry<Player.Direction, InputKey>> backward()
+    public Collection<Map.Entry<Direction, InputKey>> backward()
     {
         return Collections.unmodifiableCollection(_backward.entrySet());
     }
@@ -226,7 +230,7 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
         return Collections.unmodifiableCollection(_forward.keySet());
     }
 
-    public Collection<Player.Direction> directions()
+    public Collection<Direction> directions()
     {
         return Collections.unmodifiableCollection(_backward.keySet());
     }
@@ -247,25 +251,25 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
 
         builder.append(String.format(
                 "%s: %s, ",
-                _backward.get(Player.Direction.UP),
+                _backward.get(Direction.UP),
                 "UP"
         ));
 
         builder.append(String.format(
                 "%s: %s, ",
-                _backward.get(Player.Direction.DOWN),
+                _backward.get(Direction.DOWN),
                 "DOWN"
         ));
 
         builder.append(String.format(
                 "%s: %s, ",
-                _backward.get(Player.Direction.LEFT),
+                _backward.get(Direction.LEFT),
                 "LEFT"
         ));
 
         builder.append(String.format(
                 "%s: %s",
-                _backward.get(Player.Direction.RIGHT),
+                _backward.get(Direction.RIGHT),
                 "RIGHT"
         ));
 
@@ -284,25 +288,25 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
 
         builder.append(String.format(
                 "%s: %c, ",
-                _backward.get(Player.Direction.UP),
+                _backward.get(Direction.UP),
                 'U'
         ));
 
         builder.append(String.format(
                 "%s: %c, ",
-                _backward.get(Player.Direction.DOWN),
+                _backward.get(Direction.DOWN),
                 'D'
         ));
 
         builder.append(String.format(
                 "%s: %c, ",
-                _backward.get(Player.Direction.LEFT),
+                _backward.get(Direction.LEFT),
                 'L'
         ));
 
         builder.append(String.format(
                 "%s: %c",
-                _backward.get(Player.Direction.RIGHT),
+                _backward.get(Direction.RIGHT),
                 'R'
         ));
 
@@ -324,6 +328,19 @@ public class KeyMap implements Iterable<Map.Entry<InputKey, Player.Direction>>
         return this._forward.equals(other._forward);
     }
 
-    private HashMap<InputKey, Player.Direction> _forward;
-    private HashMap<Player.Direction, InputKey> _backward;
+    @Override public int hashCode()
+    {
+        int code = 982347031;
+
+        for (InputKey key : _forward.keySet())
+        {
+            code ^= key.hashCode();
+        }
+
+        return code;
+    }
+
+    private HashMap<InputKey, Direction> _forward;
+
+    private HashMap<Direction, InputKey> _backward;
 }

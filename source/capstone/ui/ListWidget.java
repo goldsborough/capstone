@@ -19,6 +19,20 @@ public class ListWidget<T> extends Widget
         this(true);
     }
 
+    public ListWidget(String title)
+    {
+        this(title, true);
+    }
+
+    public ListWidget(String title, boolean showCancelButton)
+    {
+        super(title, Panel.Orientation.VERTICAL);
+
+        _cancelShown = showCancelButton;
+
+        this.list(new ActionListBox());
+    }
+
     public ListWidget(boolean showCancelButton)
     {
         super(Panel.Orientation.VERTICAL);
@@ -121,7 +135,11 @@ public class ListWidget<T> extends Widget
 
         _list = list;
 
+        super.addSpace(0, 1);
+
         super.add(list);
+
+        super.addSpace(0, 1);
 
         if (_cancelShown) addCancelButton();
     }

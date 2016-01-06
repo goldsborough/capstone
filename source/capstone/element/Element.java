@@ -130,7 +130,7 @@ public abstract class Element
                 return new StaticObstacle(point, representation);
 
             case DYNAMIC_OBSTACLE:
-                return new DynamicObstacle(point, representation);
+                return new SequentialObstacle(point, representation);
 
             case MYSTERY_BOX:
                 return new MysteryBox(point, representation);

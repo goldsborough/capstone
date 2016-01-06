@@ -7,11 +7,15 @@ package capstone.game;
 import capstone.data.Highscore;
 import capstone.data.Profile;
 import capstone.data.Theme;
+import capstone.element.Direction;
 import capstone.element.Player;
 import capstone.ui.LegendWidget;
+import capstone.ui.LevelWindow;
 import capstone.ui.MenuWindow;
 import capstone.ui.InputKey;
 import capstone.game.Level;
+import capstone.ui.ProfileWindow;
+import capstone.ui.WelcomeWindow;
 import capstone.utility.LevelBuilder;
 import capstone.utility.StopWatch;
 import com.googlecode.lanterna.TerminalFacade;
@@ -30,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Game
 {
@@ -46,6 +51,8 @@ public class Game
         _screen.startScreen();
 
         this.gui(new GUIScreen(_screen, "Labyrinth"));
+
+        _profiles = new ArrayList<>();
     }
 
     public void play() throws IOException
@@ -61,16 +68,28 @@ public class Game
     {
         assert(_screen != null);
 
-        //_gui.showWindow(new WelcomeWindow(), GUIScreen.Position.CENTER);
+        // Important if setup() is called by Menu
+        _profiles.clear();
+        _level = null;
 
-        _profiles = _getProfiles();
+        while (_profiles.isEmpty())
+        {
+            _gui.showWindow(new WelcomeWindow(), GUIScreen.Position.CENTER);
 
-        _level = _getLevel();
+            while (_level == null)
+            {
+                _profiles.addAll(_getProfiles());
+
+                if (_profiles.isEmpty()) break;
+
+                _level = _getLevel();
+            }
+        }
     }
 
     public void loop()
     {
-        Map<String, Player.Direction> directions = new HashMap<>();
+        Map<String, Direction> directions = new HashMap<>();
 
         StopWatch timer = new StopWatch(_framePeriod, true);
 
@@ -90,14 +109,19 @@ public class Game
             }
         }
 
-        System.out.println("?");
-
         _endGame();
     }
 
     public void stop()
     {
         _screen.stopScreen();
+    }
+
+    public void backToStart()
+    {
+        setup();
+
+        _watch = new StopWatch(true);
     }
 
     public void save() throws IOException
@@ -180,15 +204,12 @@ public class Game
 
     private List<Profile> _getProfiles()
     {
-        /*
-        ProfileWindow profileWindow = new ProfileWindow();
+        ProfileWindow profileWindow = new ProfileWindow(_profiles);
 
         _gui.showWindow(profileWindow, GUIScreen.Position.CENTER);
 
         List<Profile> profiles = profileWindow.profiles();
-
-        */
-
+/*
         List<Profile> profiles = null;
 
         try
@@ -203,6 +224,7 @@ public class Game
             System.out.println("I/O Error");
             System.exit(1);
         }
+        */
 
         _fillKeyMap(profiles);
 
@@ -226,16 +248,12 @@ public class Game
 
     private Level _getLevel()
     {
-        /*
         LevelWindow levelWindow = new LevelWindow(new ArrayList<>(_profiles));
 
         _gui.showWindow(levelWindow, GUIScreen.Position.CENTER);
 
-        _level = levelWindow.level();
-
-        assert(_level != null);
-        */
-
+        return levelWindow.level();
+/*
         Level level = null;
 
         try
@@ -253,8 +271,7 @@ public class Game
             System.out.println("I/O Error");
             System.exit(1);
         }
-
-        return level;
+*/
     }
 
     private void _storeHighscore(double time)
@@ -300,28 +317,26 @@ public class Game
         return highscore;
     }
 
-    private void _handleInput(Map<String, Player.Direction> directions)
+    private void _handleInput(Map<String, Direction> directions)
     {
         Key key = _screen.readInput();
 
         if (key == null) return;
 
-        if (key.getKind() == Key.Kind.Escape) new MenuWindow(this);
+        if (key.getKind() == Key.Kind.Escape)
+        {
+            new MenuWindow(this).show();
+        }
 
         else if (key.getKind() == Key.Kind.Backspace)
         {
-            _gui.showWindow(
-                    new LegendWidget(_level.theme()),
-                    GUIScreen.Position.CENTER
-            );
-
-            _level.redraw();
+            new MenuWindow(this).showLegend();
         }
 
         else _processKey(key, directions);
     }
 
-    private void _processKey(Key raw, Map<String, Player.Direction> directions)
+    private void _processKey(Key raw, Map<String, Direction> directions)
     {
         assert(raw != null);
 
@@ -331,7 +346,7 @@ public class Game
 
         if (profile == null) return;
 
-        Player.Direction direction = profile.direction(key);
+        Direction direction = profile.direction(key);
 
         directions.put(profile.id(), direction);
     }

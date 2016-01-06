@@ -115,6 +115,6 @@ public class NewPageTest
 
         assert(page.isFull());
 
-        assertNull(page.freePoint());
+        assertNull(page.freePoint(page.region()));
     }
 }

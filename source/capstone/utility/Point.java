@@ -83,8 +83,7 @@ public class Point
 
     public Point move(int dx, int dy)
     {
-        assert(_first  + dx >= 0);
-        assert(_second + dy >= 0);
+        assert(! wouldGoNegative(dx, dy));
 
         first(_first + dx);
         second(_second + dy);
@@ -97,6 +96,40 @@ public class Point
         assert(delta != null);
 
         return move(delta.x(), delta.y());
+    }
+
+    public boolean wouldGoNegative(Delta delta)
+    {
+        assert(delta != null);
+
+        return wouldGoNegative(delta.x(), delta.y());
+    }
+
+    public boolean wouldGoNegative(int dx, int dy)
+    {
+        if (_first  + dx < 0) return true;
+
+        if (_second + dy < 0) return true;
+
+        return false;
+    }
+
+    public boolean wouldGoOutside(Delta delta, Region region)
+    {
+        if (wouldGoNegative(delta)) return true;
+
+        Point test = new Point(this);
+
+        test.move(delta);
+
+        return ! region.contains(test);
+    }
+
+    public Delta distanceTo(Point other)
+    {
+        assert(other != null);
+
+        return new Delta(other.x() - this.x(), other.y() - this.y());
     }
 
     @Override public int compareTo(Point other)

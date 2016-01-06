@@ -1,5 +1,7 @@
 package capstone.ui;
 
+import capstone.game.Level;
+import capstone.utility.LevelBuilder;
 import capstone.utility.Page;
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.GUIScreen;
@@ -183,22 +185,36 @@ public class NewLevelBuilderTest
 
         switch (kind)
         {
-            case WALL: element = new Wall(point, representation); break;
+            case WALL:
+                element = new Wall(point, representation);
+                break;
 
-            case ENTRANCE: element = new Entrance(point, representation); break;
+            case ENTRANCE:
+                element = new Entrance(point, representation);
+                break;
 
-            case EXIT: element = new Exit(point, representation); break;
+            case EXIT:
+                element = new Exit(point, representation);
+                break;
 
-            case KEY: element = new Key(point, representation); break;
+            case KEY:
+                element = new Key(point, representation);
+                break;
 
-            case STATIC_OBSTACLE: element = new StaticObstacle(point, representation); break;
+            case STATIC_OBSTACLE:
+                element = new StaticObstacle(point, representation);
+                break;
 
-            case DYNAMIC_OBSTACLE: element = new DynamicObstacle(point, representation); break;
+            case DYNAMIC_OBSTACLE:
+                element = new StaticObstacle(point, representation);
+                break;
 
-            case MYSTERY_BOX: element = new MysteryBox(point, representation); break;
+            case MYSTERY_BOX:
+                element = new MysteryBox(point, representation);
+                break;
         }
 
-        map.put(point, (E)element);
+        map.put(point, (E) element);
     }
 
     @BeforeClass public static void setUpTheme()
@@ -340,11 +356,11 @@ public class NewLevelBuilderTest
     {
         File file = getSessionFile();
 
-        Level level = new Level(file, profiles, screen);
+        LevelBuilder level = new LevelBuilder(file, profiles, screen);
 
         assertEquals(level.players(), players.values());
 
-        Page page = level.currentPage();
+        Page page = level.page();
 
         assertEquals(page.walls(), walls.values());
         assertEquals(page.entrances(), entrances.values());
@@ -359,13 +375,13 @@ public class NewLevelBuilderTest
 
     @Test public void testSessionConstructorConstructsWellFromProperties()
     {
-        Level level = new Level(getSession(), profiles, screen);
+        LevelBuilder level = new LevelBuilder(getSession(), profiles, screen);
 
-        Page page = level.currentPage();
+        Page page = level.page();
 
         assertEquals(level.players(), players.values());
 
-        assertEquals(level.currentPage().walls(), walls.values());
+        assertEquals(level.page().walls(), walls.values());
         assertEquals(page.entrances(), entrances.values());
         assertEquals(page.exits(), exits.values());
         assertEquals(page.keys(), keys.values());
@@ -376,9 +392,16 @@ public class NewLevelBuilderTest
 
     @Test public void testLayoutThemeConstructor()
     {
-        Level level = new Level("Level", getLayout(), theme, profiles, screen);
+        LevelBuilder level = new LevelBuilder(
+                Level.Difficulty.HARD,
+                "LevelBuilder",
+                getLayout(),
+                theme,
+                profiles,
+                screen
+        );
 
-        Page page = level.currentPage();
+        Page page = level.page();
 
         assertEquals(level.players(), players.values());
 
@@ -394,84 +417,84 @@ public class NewLevelBuilderTest
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromFileThrowsForEmptyProfiles() throws IOException
     {
-        new Level(getSessionFile(), new ArrayList<>(), screen);
+        new LevelBuilder(getSessionFile(), new ArrayList<>(), screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromFileThrowsForNullProfiles() throws IOException
     {
-        new Level(getSessionFile(), null, screen);
+        new LevelBuilder(getSessionFile(), null, screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromFileThrowsForNullScreen() throws IOException
     {
-        new Level(getSessionFile(), profiles, null);
+        new LevelBuilder(getSessionFile(), profiles, null);
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromPropertiesThrowsForEmptyProfiles()
     {
-        new Level(getSession(), new ArrayList<>(), screen);
+        new LevelBuilder(getSession(), new ArrayList<>(), screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromPropertiesThrowsForNullProfiles()
     {
-        new Level(getSession(), null, screen);
+        new LevelBuilder(getSession(), null, screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testSessionConstructorConstructingFromPropertiesThrowsForNullScreen()
     {
-        new Level(getSession(), profiles, null);
+        new LevelBuilder(getSession(), profiles, null);
     }
 
     @Test(expected=AssertionError.class)
     public void testLayoutThemeConstructorConstructingFromPropertiesThrowsForEmptyProfiles()
     {
-        new Level("Level", getLayout(), theme, new ArrayList<>(), screen);
+        new LevelBuilder(Level.Difficulty.HARD, "LevelBuilder", getLayout(), theme, new ArrayList<>(), screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testLayoutThemeConstructorConstructingFromPropertiesThrowsForNullTheme()
     {
-        new Level("Level", getLayout(), null, profiles, screen);
+        new LevelBuilder(Level.Difficulty.HARD, "LevelBuilder", getLayout(), null, profiles, screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testLayoutThemeConstructorFromPropertiesThrowsForNullProfiles()
     {
-        new Level("Level", getLayout(), theme, null, screen);
+        new LevelBuilder(Level.Difficulty.HARD, "LevelBuilder", getLayout(), theme, null, screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testLayoutThemeConstructorFromPropertiesThrowsForNullScreen()
     {
-        new Level("Level", getLayout(), theme, profiles, null);
+        new LevelBuilder(Level.Difficulty.HARD, "LevelBuilder", getLayout(), theme, profiles, null);
     }
 
     @Test(expected=AssertionError.class)
     public void testLayoutThemeConstructorConstructingFromFileThrowsForEmptyProfiles() throws IOException
     {
-        new Level(getLayoutFile(), theme, new ArrayList<>(), screen);
+        new LevelBuilder(Level.Difficulty.HARD, getLayoutFile(), theme, new ArrayList<>(), screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testLayoutThemeConstructorConstructingFromFileThrowsForNullTheme() throws IOException
     {
-        new Level(getLayoutFile(), null, profiles, screen);
+        new LevelBuilder(Level.Difficulty.HARD, getLayoutFile(), null, profiles, screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testLayoutThemeConstructorFromFileThrowsForNullProfiles() throws IOException
     {
-        new Level(getLayoutFile(), theme, null, screen);
+        new LevelBuilder(Level.Difficulty.HARD, getLayoutFile(), theme, null, screen);
     }
 
     @Test(expected=AssertionError.class)
     public void testLayoutThemeConstructorFromFileThrowsForNullScreen() throws IOException
     {
-        new Level(getLayoutFile(), theme, profiles, null);
+        new LevelBuilder(Level.Difficulty.HARD, getLayoutFile(), theme, profiles, null);
     }
 }

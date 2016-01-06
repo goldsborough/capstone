@@ -98,36 +98,30 @@ public class PlayerTest
 
     @Test public void testGeneralizedMoveUp()
     {
-        player.move(Player.Direction.UP);
+        player.move(Direction.UP);
 
         assertThat(player.point(), is(point.above()));
     }
 
     @Test public void testGeneralizedMoveDown()
     {
-        player.move(Player.Direction.DOWN);
+        player.move(Direction.DOWN);
 
         assertThat(player.point(), is(point.below()));
     }
 
     @Test public void testGeneralizedMoveLeft()
     {
-        player.move(Player.Direction.LEFT);
+        player.move(Direction.LEFT);
 
         assertThat(player.point(), is(point.left()));
     }
 
     @Test public void testGeneralizedMoveRight()
     {
-        player.move(Player.Direction.RIGHT);
+        player.move(Direction.RIGHT);
 
         assertThat(player.point(), is(point.right()));
-    }
-
-    @Test(expected=AssertionError.class)
-    public void testGeneralizedMoveThrowsForNullDirection()
-    {
-        player.move(null);
     }
 
     @Test(expected=AssertionError.class)

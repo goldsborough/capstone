@@ -70,10 +70,9 @@ public class InputKey extends Key
 
         if (kind == Kind.NormalKey)
         {
-            return Character.toString(super.getCharacter()).toUpperCase();
+            return Character.toString(super.getCharacter()).toLowerCase();
         }
 
         else return kind.toString();
     }
-
 }

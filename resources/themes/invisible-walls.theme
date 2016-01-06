@@ -1,24 +1,24 @@
 #capstone.data.Theme
-#Wed Jan 06 15:59:00 CET 2016
-MYSTERY_BOX.foreground=BLUE
-WALL.background=BLUE
+#Wed Jan 06 15:56:32 CET 2016
+MYSTERY_BOX.foreground=YELLOW
+WALL.background=BLACK
 MYSTERY_BOX.character=?
-ENTRANCE.foreground=YELLOW
+ENTRANCE.foreground=BLUE
 KEY.foreground=YELLOW
-DYNAMIC_OBSTACLE.foreground=YELLOW
-STATIC_OBSTACLE.foreground=YELLOW
+DYNAMIC_OBSTACLE.foreground=BLACK
+STATIC_OBSTACLE.foreground=RED
 MYSTERY_BOX.background=GREEN
-STATIC_OBSTACLE.background=RED
+STATIC_OBSTACLE.background=BLACK
 WALL.character=\ 
 EXIT.character=*
-EXIT.foreground=YELLOW
+EXIT.foreground=GREEN
 DYNAMIC_OBSTACLE.character=\!
 STATIC_OBSTACLE.character=\#
-WALL.foreground=BLUE
-EXIT.background=CYAN
+WALL.foreground=BLACK
+EXIT.background=WHITE
 ENTRANCE.background=WHITE
 KEY.background=DEFAULT
 ENTRANCE.character=^
 DYNAMIC_OBSTACLE.background=RED
 KEY.character=$
-name=default
+name=dark

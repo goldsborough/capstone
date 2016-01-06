@@ -1,0 +1,24 @@
+#capstone.data.Theme
+#Wed Jan 06 15:50:20 CET 2016
+MYSTERY_BOX.foreground=WHITE
+WALL.background=WHITE
+MYSTERY_BOX.character=?
+ENTRANCE.foreground=GREEN
+KEY.foreground=YELLOW
+DYNAMIC_OBSTACLE.foreground=RED
+STATIC_OBSTACLE.foreground=BLUE
+MYSTERY_BOX.background=GREEN
+STATIC_OBSTACLE.background=WHITE
+WALL.character=\ 
+EXIT.character=*
+EXIT.foreground=MAGENTA
+DYNAMIC_OBSTACLE.character=\!
+STATIC_OBSTACLE.character=\#
+WALL.foreground=WHITE
+EXIT.background=RED
+ENTRANCE.background=RED
+KEY.background=WHITE
+ENTRANCE.character=^
+DYNAMIC_OBSTACLE.background=WHITE
+KEY.character=$
+name=ice

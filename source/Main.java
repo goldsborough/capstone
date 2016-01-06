@@ -1,4 +1,4 @@
-import capstone.Game;
+import capstone.game.Game;
 
 import java.io.IOException;
 

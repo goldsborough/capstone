@@ -33,7 +33,7 @@ public class HighscoreWidget extends Widget
 
         add(slot, new Label(place + ":"));
 
-        add(slot, new Label(Double.toString(entry.time())));
+        add(slot, new Label(String.format("%1$.3fs", entry.time())));
 
         String players = entry.players().toString();
 

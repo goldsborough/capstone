@@ -77,16 +77,22 @@ public class ButtonSlot extends Widget
     {
         switch (kind)
         {
-            case START: add(new Button("Start", () -> getWindow().close())); break;
+            case START: add(new Button("Start", this::_close)); break;
 
-            case OK: add(new Button("OK", () -> getWindow().close())); break;
+            case OK: add(new Button("OK", this::_close)); break;
 
-            case DONE: add(new Button("Done", () -> getWindow().close())); break;
+            case DONE: add(new Button("Done", this::_close)); break;
 
-            case CANCEL: add(new Button("Cancel", () -> getWindow().close())); break;
+            case CANCEL: add(new Button("Cancel", this::_close)); break;
 
             case EXIT: add(new Button("Exit", () -> System.exit(0))); break;
         }
+    }
+
+    private void _close()
+    {
+        getWindow().close();
+        this.close();
     }
 
     private Alignment _determineAlignment()

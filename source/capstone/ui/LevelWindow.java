@@ -2,6 +2,8 @@ package capstone.ui;
 
 import capstone.data.Profile;
 import capstone.data.Theme;
+import capstone.game.Level;
+import capstone.utility.LevelBuilder;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.component.Button;
 
@@ -23,7 +25,7 @@ public class LevelWindow extends Widget
 
         addSpace(0, 2);
 
-        _createBottomButtons(true);
+        add(new ButtonSlot(ButtonSlot.Kind.CANCEL, ButtonSlot.Kind.EXIT));
     }
 
     public Level level()
@@ -48,13 +50,30 @@ public class LevelWindow extends Widget
 
         if (file == null) return;
 
-        Theme theme = _getTheme();
+        Level.Difficulty difficulty;
 
-        if (theme == null) return;
+        Theme theme;
+
+        do
+        {
+            theme = _getTheme();
+
+            if (theme == null) return;
+
+            difficulty = _getDifficulty();
+        }
+
+        while (difficulty == null);
 
         try
         {
-            _level = new Level(file, theme, _profiles, getOwner());
+            _level = new Level(new LevelBuilder(
+                    difficulty,
+                    file,
+                    theme,
+                    _profiles,
+                    getOwner()
+            ));
 
             this.close();
         }
@@ -71,6 +90,14 @@ public class LevelWindow extends Widget
         return window.theme();
     }
 
+    private Level.Difficulty _getDifficulty()
+    {
+        DifficultyWidget widget = new DifficultyWidget();
+
+        getOwner().showWindow(widget, GUIScreen.Position.CENTER);
+
+        return widget.difficulty();
+    }
 
     private void _getSession()
     {
@@ -80,7 +107,11 @@ public class LevelWindow extends Widget
 
         try
         {
-            _level = new Level(file, _profiles, getOwner());
+            _level = new Level(new LevelBuilder(
+                    file,
+                    _profiles,
+                    getOwner()
+            ));
 
             this.close();
         }

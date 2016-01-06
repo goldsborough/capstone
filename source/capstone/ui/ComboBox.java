@@ -34,7 +34,7 @@ public class ComboBox<T> extends Widget
 
     public ComboBox(ArrayList<T> options)
     {
-        this("...", options.subList(1, options.size() - 1));
+        this("...", options);
     }
 
     public ComboBox(String display, Collection<T> options)

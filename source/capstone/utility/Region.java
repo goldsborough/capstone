@@ -3,7 +3,7 @@ package capstone.utility;
 /**
  * Created by petergoldsborough on 01/03/16.
  */
-public class Region extends AbstractPair<Point, Point>
+public class Region extends AbstractPair<Point, Point> implements Comparable<Region>
 {
     public enum Vertical { SOUTH, NORTH }
 
@@ -15,6 +15,11 @@ public class Region extends AbstractPair<Point, Point>
 
         assert(southWest.x() <= northEast.x());
         assert(southWest.y() >= northEast.y());
+    }
+
+    public Region(int width, int height)
+    {
+        this(0, height, width, 0);
     }
 
     public Region(int southWestX,
@@ -148,6 +153,13 @@ public class Region extends AbstractPair<Point, Point>
         if (point.y() < northEast().y()) return false;
 
         return true;
+    }
+
+    @Override public int compareTo(Region other)
+    {
+        assert(other != null);
+
+        return Integer.compare(this.area(), other.area());
     }
 
     private void _invalidate()

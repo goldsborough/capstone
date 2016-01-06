@@ -1,16 +1,14 @@
 package capstone.ui;
 
-import capstone.Game;
-import capstone.data.Highscore;
+import capstone.game.Game;
 import capstone.data.Profile;
-import capstone.ui.Widget;
+import capstone.game.Level;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +41,23 @@ public class MenuWindow extends Widget
         add(new Button("Back to Start", this::_backToStart));
 
         add(new Button("Exit", () -> System.exit(0)));
+    }
 
-        game.gui().showWindow(this, GUIScreen.Position.CENTER);
+    public void show()
+    {
+        _game.gui().showWindow(this, GUIScreen.Position.CENTER);
+
+        _game.level().redraw();
+    }
+
+    public void showLegend()
+    {
+        _game.gui().showWindow(
+                new LegendWidget(_game.level().theme()),
+                GUIScreen.Position.CENTER
+        );
+
+        _game.level().redraw();
     }
 
     public Game game()
@@ -126,7 +139,7 @@ public class MenuWindow extends Widget
     {
         super.close();
 
-        _game.setup();
+        _game.backToStart();
     }
 
     private void _saveAndBackToStart()

@@ -82,47 +82,37 @@ public class Pattern implements Iterable<Delta>
         return point;
     }
 
-    public Point safeApply(Point point,
-                          int rightBoundary,
-                          int bottomBoundary)
+    public Point safeApply(Point point, Region region)
     {
         assert(_index >= 0);
         assert(_index < _pattern.length);
 
-        Delta d = _pattern[_index];
+        Delta delta = _pattern[_index];
 
-        if (point.x() + d.x() < 0) return point;
-        if (point.y() + d.y() < 0) return point;
-
-        if (point.x() + d.x() >= rightBoundary) return point;
-        if (point.y() + d.y() >= bottomBoundary) return point;
+        if (point.wouldGoOutside(delta, region)) return point;
 
         return point.move(_pattern[_index]);
     }
 
-    public Point safeNext(Point point,
-                          int rightBoundary,
-                          int bottomBoundary)
+    public Point safeNext(Point point, Region region)
     {
         assert(_index >= 0);
         assert(_index < _pattern.length);
 
-        safeApply(point, rightBoundary, bottomBoundary);
+        safeApply(point, region);
 
         // No defensive coding!
-        if (--_index == -1) _index = _pattern.length - 1;
+        if (++_index == length()) _index = _pattern.length - 1;
 
         return point;
     }
 
-    public Point safePrevious(Point point,
-                              int rightBoundary,
-                              int bottomBoundary)
+    public Point safePrevious(Point point, Region region)
     {
         assert(_index >= 0);
         assert(_index < _pattern.length);
 
-        safeApply(point, rightBoundary, bottomBoundary);
+        safeApply(point, region);
 
         // No defensive coding!
         if (--_index == -1) _index = _pattern.length - 1;

@@ -1,5 +1,6 @@
 package capstone.data;
 
+import capstone.element.Direction;
 import capstone.utility.KeyMap;
 import capstone.element.Player;
 import capstone.ui.InputKey;
@@ -16,19 +17,6 @@ import java.util.*;
 
 public final class Profile extends Data
 {
-    public static Calendar currentTime()
-    {
-        Calendar now = new GregorianCalendar();
-
-        return new GregorianCalendar(
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH),
-                now.get(Calendar.HOUR_OF_DAY),
-                now.get(Calendar.MINUTE)
-        );
-    }
-
     public Profile(Properties serialization)
     {
         deserialize(serialization);
@@ -49,7 +37,6 @@ public final class Profile extends Data
         this.keyMap(keyMap);
         this.representation(representation);
 
-        _joined = currentTime();
         _timesPlayed = 0;
     }
 
@@ -100,14 +87,9 @@ public final class Profile extends Data
         _keyMap = keymap;
     }
 
-    public Player.Direction direction(InputKey key)
+    public Direction direction(InputKey key)
     {
         return _keyMap.get(key);
-    }
-
-    public Calendar joined()
-    {
-        return _joined;
     }
 
     public int timesPlayed()
@@ -146,9 +128,9 @@ public final class Profile extends Data
         _realName = serialization.getProperty("realName");
 
         // No default constructor for KeyMap
-        HashMap<InputKey, Player.Direction> mapping = new HashMap<>();
+        HashMap<InputKey, Direction> mapping = new HashMap<>();
 
-        for (Player.Direction direction : Player.Direction.values())
+        for (Direction direction : Direction.motion())
         {
             mapping.put(
                     InputKey.fromString(serialization.getProperty(direction.toString())),
@@ -157,12 +139,6 @@ public final class Profile extends Data
         }
 
         _keyMap = new KeyMap(mapping);
-
-        assert(serialization.containsKey("joined"));
-        _joined = new GregorianCalendar();
-        _joined.setTimeInMillis(
-                Long.parseLong(serialization.getProperty("joined"))
-        );
 
         assert(serialization.containsKey("timesPlayed"));
         _timesPlayed = Integer.parseInt(serialization.getProperty("timesPlayed"));
@@ -189,18 +165,13 @@ public final class Profile extends Data
         serialization.setProperty("id", _id);
         serialization.setProperty("realName", _realName);
 
-        for (Map.Entry<InputKey, Player.Direction> entry : _keyMap)
+        for (Map.Entry<InputKey, Direction> entry : _keyMap)
         {
             serialization.setProperty(
                     entry.getValue().toString(),
                     entry.getKey().toString()
             );
         }
-
-        serialization.setProperty(
-                "joined",
-                Long.toString(_joined.getTimeInMillis())
-        );
 
         serialization.setProperty(
                 "timesPlayed",
@@ -238,10 +209,14 @@ public final class Profile extends Data
         return this._id.equals(other._id);
     }
 
-    @Override
-    public String fileName()
+    @Override public String fileName()
     {
         return String.format("%1$s.profile", _id);
+    }
+
+    @Override public int hashCode()
+    {
+        return _id.hashCode();
     }
 
     private String _id;
@@ -249,8 +224,6 @@ public final class Profile extends Data
     private String _realName;
 
     private KeyMap _keyMap;
-
-    private Calendar _joined;
 
     private int _timesPlayed;
 

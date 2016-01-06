@@ -30,8 +30,8 @@ public class ThemeWindow extends Widget
         _createBottomButtons(true);
     }
 
-    public Theme theme()
-    {
+    public Theme theme() {
+
         return _theme;
     }
 
@@ -67,6 +67,8 @@ public class ThemeWindow extends Widget
                 new File("resources/themes"),
                 "Choose Theme"
         );
+
+        if (file == null) return;
 
         try
         {

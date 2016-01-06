@@ -1,5 +1,8 @@
 package capstone.utility;
 
+import capstone.element.Direction;
+import capstone.element.Player;
+
 public class Delta extends AbstractPair<Integer, Integer> implements Comparable<Delta>
 {
     public static Delta Up()
@@ -22,6 +25,11 @@ public class Delta extends AbstractPair<Integer, Integer> implements Comparable<
         return new Delta(+1, 0);
     }
 
+    public static Delta Stay()
+    {
+        return new Delta(0, 0);
+    }
+
     public Delta(int x, int y)
     {
         super(x, y);
@@ -30,6 +38,17 @@ public class Delta extends AbstractPair<Integer, Integer> implements Comparable<
     public Delta(Delta other)
     {
         super(other);
+    }
+
+    public Delta(Direction direction)
+    {
+        switch (direction)
+        {
+            case UP:    this.x( 0); this.y(-1); break;
+            case DOWN:  this.x( 0); this.y(+1); break;
+            case LEFT:  this.x(-1); this.y( 0); break;
+            case RIGHT: this.x(+1); this.y( 0); break;
+        }
     }
 
     public int x()

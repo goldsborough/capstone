@@ -1,6 +1,9 @@
 package capstone.ui;
 
+import capstone.data.Profile;
 import capstone.element.Player;
+import capstone.game.Level;
+import capstone.utility.Dimensions;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 
@@ -30,44 +33,95 @@ public class StatusBar
     {
         int row = _level.pageSize().getRows();
 
-        ScreenWriter writer = new ScreenWriter(_level.screen());
+        _writer = new ScreenWriter(_level.screen());
 
-        _drawGameStatus(writer, row++);
+        _drawGameStatus(row++);
 
         for (Player player : _level.players())
         {
-            _drawPlayerStatus(writer, player, row++);
+            _drawPlayerStatus(player, row++);
+        }
+
+        for (Profile profile : _level.hidden())
+        {
+            _drawHiddenPlayerStatus(profile, row++);
         }
     }
 
-    private void _drawGameStatus(ScreenWriter writer, int row)
+    private void _drawGameStatus(int row)
     {
-        String status = String.format(
-                "Keys: %1$d/%2$d\tPage: %3$s",
+        _writer.setBackgroundColor(Terminal.Color.RED);
+
+        String left = String.format(
+                "  Keys: %1$d/%2$d",
                 _level.keysCollected(),
-                _level.totalKeys(),
-                _level.grid().currentIndex()
+                _level.totalKeys()
         );
 
-        writer.drawString(0, row, status);
+        String right = String.format(
+                "Page: %1$s/%2$s",
+                _level.grid().currentIndex(),
+                _dimensions()
+        );
+
+        int padding = _level.pageSize().getColumns();
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(left);
+        builder.append(_empty(padding - left.length() - right.length()));
+        builder.append(right);
+
+        _writer.drawString(0, row, builder.toString());
     }
 
-    private void _drawPlayerStatus(ScreenWriter writer, Player player, int row)
+    private void _drawPlayerStatus(Player player, int row)
     {
-        writer.setBackgroundColor(player.representation().background());
-        writer.setForegroundColor(player.representation().foreground());
+        _drawCharacter(player.profile(), row);
 
-        Character character = player.representation().character();
+        int width = _level.pageSize().getColumns() - 2;
 
-        writer.drawString(0, row, character.toString());
+        _writer.drawString(2, row, player.toString(width));
+    }
 
-        writer.setBackgroundColor(Terminal.Color.DEFAULT);
-        writer.setForegroundColor(Terminal.Color.DEFAULT);
+    private Dimensions _dimensions()
+    {
+        Dimensions dimensions = new Dimensions(_level.grid().dimensions());
 
-        String status = String.format(" %1$s", player);
+        dimensions.height(dimensions.height() - 1);
+        dimensions.width(dimensions.width() - 1);
 
-        writer.drawString(player.id().length(), row, status);
+        return dimensions;
+    }
+
+    private void _drawHiddenPlayerStatus(Profile profile, int row)
+    {
+        _drawCharacter(profile, row);
+
+        String status = String.format("%1$s: HIDDEN", profile.id());
+
+        _writer.drawString(2, row, status);
+    }
+
+    private void _drawCharacter(Profile profile, int row)
+    {
+        _writer.setBackgroundColor(profile.representation().background());
+        _writer.setForegroundColor(profile.representation().foreground());
+
+        Character character = profile.representation().character();
+
+        _writer.drawString(0, row, character.toString());
+
+        _writer.setBackgroundColor(Terminal.Color.DEFAULT);
+        _writer.setForegroundColor(Terminal.Color.DEFAULT);
+    }
+
+    private static String _empty(int width)
+    {
+        return new String(new char[width]).replace("\0", " ");
     }
 
     private Level _level;
+
+    private ScreenWriter _writer;
 }

@@ -2,7 +2,7 @@ package capstone.utility;
 
 import capstone.data.Representation;
 import capstone.data.Theme;
-import capstone.element.DynamicObstacle;
+import capstone.element.SequentialObstacle;
 import capstone.element.Element;
 import capstone.element.Entrance;
 import capstone.element.Exit;
@@ -71,7 +71,7 @@ public class ExistingPageGridTest
         elements.add(new Wall(new Point(0, 0), representation));
         elements.add(new Key(new Point(1, 1), representation));
 
-        elements.add(new DynamicObstacle(new Point(0, 2), representation));
+        elements.add(new SequentialObstacle(new Point(0, 2), representation));
         elements.add(new StaticObstacle(new Point(1, 3), representation));
 
         elements.add(new MysteryBox(new Point(2, 0), representation));

@@ -162,6 +162,31 @@ public class Widget extends Window implements Component
         addSpace(_panel, width, height);
     }
 
+    public void remove(Component component)
+    {
+        assert(component != null);
+
+        super.removeComponent(component);
+    }
+
+    public void remove(Panel panel)
+    {
+        assert(panel != null);
+
+        panel.removeAllComponents();
+
+        super.removeComponent(panel);
+    }
+
+    public void remove(Widget widget)
+    {
+        assert(widget != null);
+
+        widget.hook().removeAllComponents();
+
+        remove(widget.hook());
+    }
+
     protected void add(Panel panel,
                        Widget widget,
                        Component.Alignment alignment)

@@ -4,6 +4,9 @@ import capstone.data.Representation;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.terminal.Terminal;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Created by petergoldsborough on 12/30/15.
  */
@@ -19,6 +22,8 @@ public class RepresentationWidget extends Widget
         super(title);
 
         _title = title;
+
+        addSpace(0, 1);
 
         _characterWidget = _createCharacterWidget();
 
@@ -75,12 +80,12 @@ public class RepresentationWidget extends Widget
 
     private boolean _validate(NamedWidget<ComboBox<Terminal.Color>> color)
     {
-        boolean valid = color.widget().isNull();
+        boolean valid = ! color.widget().isNull();
 
         if (! valid)
         {
             MessageBox.showMessageBox(
-                    getOwner(),
+                    getWindow().getOwner(),
                     "Invalid Input",
                     String.format("Please select an item for '%s'", color.title())
             );
@@ -91,7 +96,7 @@ public class RepresentationWidget extends Widget
 
     private InputWidget _createCharacterWidget()
     {
-        InputWidget characterWidget = new InputWidget("Character:", "\\S");
+        InputWidget characterWidget = new InputWidget("Character:", ".");
 
         add(characterWidget);
 
@@ -100,6 +105,7 @@ public class RepresentationWidget extends Widget
 
     private NamedWidget<ComboBox<Terminal.Color>> _createColorWidget(String ground)
     {
+
         NamedWidget<ComboBox<Terminal.Color>> colorWidget = new NamedWidget<>(
                 ground + " Color",
                 new ComboBox<>(Terminal.Color.values())

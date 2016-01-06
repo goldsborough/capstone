@@ -278,4 +278,56 @@ public class PointTest
 
         assertThat(point.hashCode(), is (1 ^ (3 << 1)));
     }
+
+    @Test public void testWouldGoNegativeForDelta()
+    {
+        point = new Point(0, 0);
+
+        assertTrue(point.wouldGoNegative(new Delta(-5, 0)));
+        assertTrue(point.wouldGoNegative(new Delta(0, -5)));
+        assertTrue(point.wouldGoNegative(new Delta(-5, -5)));
+
+        assertFalse(point.wouldGoNegative(new Delta(+5, 0)));
+        assertFalse(point.wouldGoNegative(new Delta(0, +5)));
+        assertFalse(point.wouldGoNegative(new Delta(+5, +5)));
+    }
+
+    @Test public void testWouldGoNegativeForCoordinates()
+    {
+        point = new Point(0, 0);
+
+        assertTrue(point.wouldGoNegative(-5, 0));
+        assertTrue(point.wouldGoNegative(0, -5));
+        assertTrue(point.wouldGoNegative(-5, -5));
+
+        assertFalse(point.wouldGoNegative(+5, 0));
+        assertFalse(point.wouldGoNegative(0, +5));
+        assertFalse(point.wouldGoNegative(+5, +5));
+    }
+
+    @Test public void testWouldGoOutside()
+    {
+        point = new Point(0, 0);
+
+        Region region = new Region(0, 1, 1, 0);
+
+        assertTrue(point.wouldGoOutside(new Delta(-5,  0), region));
+        assertTrue(point.wouldGoOutside(new Delta( 0, -5), region));
+        assertTrue(point.wouldGoOutside(new Delta(-5, -5), region));
+        assertTrue(point.wouldGoOutside(new Delta(-1, 0), region));
+
+        assertFalse(point.wouldGoOutside(new Delta( 0, +1), region));
+        assertFalse(point.wouldGoOutside(new Delta(+1, 0), region));
+        assertFalse(point.wouldGoOutside(new Delta(+1, +1), region));
+    }
+
+    @Test public void testDistance()
+    {
+        point = new Point(1, 1);
+
+        assertThat(point.distanceTo(new Point(2, 2)), is(new Delta(1, 1)));
+        assertThat(point.distanceTo(new Point(2, 11)), is(new Delta(1, 10)));
+        assertThat(point.distanceTo(new Point(100, 124)), is(new Delta(99, 123)));
+        assertThat(point.distanceTo(new Point(0, 0)), is(new Delta(-1, -1)));
+    }
 }

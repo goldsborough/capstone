@@ -1,6 +1,7 @@
 package capstone.element;
 
 import capstone.data.Profile;
+import capstone.utility.Delta;
 import capstone.utility.Point;
 import capstone.utility.Region;
 import com.googlecode.lanterna.screen.Screen;
@@ -12,8 +13,6 @@ import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 public class Player extends Element
 {
     public static int MAXIMUM_LIVES = 3;
-
-    public enum Direction { UP, DOWN, LEFT, RIGHT }
 
     public Player(Point point, Profile profile)
     {
@@ -75,10 +74,26 @@ public class Player extends Element
         return this;
     }
 
+    public Player move(int dx, int dy)
+    {
+        assert(isAlive());
+
+        _previousPoint = _point;
+
+        // Modifications always on a new point.
+        _point = new Point(_point).move(dx, dy);
+
+        return this;
+    }
+
+    public Player move(Delta delta)
+    {
+        return move(delta.x(), delta.y());
+    }
+
     public Player moveUp()
     {
         assert(isAlive());
-        assert(_point.y() > 0);
 
         _previousPoint = _point;
         _point = _point.above();
@@ -99,7 +114,6 @@ public class Player extends Element
     public Player moveLeft()
     {
         assert(isAlive());
-        assert(_point.x() > 0);
 
         _previousPoint = _point;
         _point = _point.left();
@@ -120,19 +134,26 @@ public class Player extends Element
     public Player goBack()
     {
         assert(isAlive());
-        
-        // Should never go back twice in a row
-        assert(_previousPoint != null);
+        assert(canGoBack());
 
         _point = _previousPoint;
-        _previousPoint = null;
 
         return this;
+    }
+
+    public boolean wouldGoNegative(Delta delta)
+    {
+        return _point.wouldGoNegative(delta);
     }
 
     public boolean canGoBack()
     {
         return _previousPoint != null;
+    }
+
+    public Point previousPoint()
+    {
+        return _previousPoint;
     }
 
     public String id()
@@ -160,6 +181,11 @@ public class Player extends Element
         return _lives == 0;
     }
 
+    public boolean hasFullHealth()
+    {
+        return _lives == MAXIMUM_LIVES;
+    }
+
     @Override public boolean equals(Object object)
     {
         if (object == null) return false;
@@ -178,7 +204,7 @@ public class Player extends Element
         if (isAlive())
         {
             return String.format(
-                    "%1$s: %2$d/%3$d Lives\t %4$s",
+                    "%1$s: %2$d/%3$d Lives Position: %4$s",
                     id(),
                     lives(),
                     Player.MAXIMUM_LIVES,
@@ -187,6 +213,39 @@ public class Player extends Element
         }
 
         else return String.format("%1$s: DEAD", id());
+    }
+
+    public String toString(int width)
+    {
+        if (isAlive())
+        {
+            String left = String.format(
+                    "%1$s: %2$d/%3$d Lives",
+                    id(),
+                    lives(),
+                    Player.MAXIMUM_LIVES
+            );
+
+            String right = String.format(
+                    "Position: %1$s",
+                    point()
+            );
+
+            StringBuilder builder = new StringBuilder();
+
+            builder.append(left);
+            builder.append(_empty(width - left.length() - right.length()));
+            builder.append(right);
+
+            return builder.toString();
+        }
+
+        else return String.format("%1$s: DEAD", id());
+    }
+
+    private static String _empty(int width)
+    {
+        return new String(new char[width]).replace("\0", " ");
     }
 
     private Profile _profile;

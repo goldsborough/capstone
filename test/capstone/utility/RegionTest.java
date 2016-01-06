@@ -204,4 +204,20 @@ public class RegionTest
 
         assertThat(region.circumference(), is(8));
     }
+
+    @Test public void testCompareTo()
+    {
+        region = new Region(0, 2, 2, 0);
+
+        assertThat(region.compareTo(new Region(0, 5, 5, 0)), is(-1));
+        assertThat(region.compareTo(new Region(0, 1, 1, 0)), is(+1));
+        assertThat(region.compareTo(new Region(region))    , is(+1));
+    }
+
+    @Test public void testConstructsWellFromWidthAndHeight()
+    {
+        region = new Region(4, 5);
+
+        assertThat(region, is(new Region(0, 5, 4, 0)));
+    }
 }

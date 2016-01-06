@@ -56,22 +56,27 @@ public class DeltaTest
 
     @Test public void testUp()
     {
-        assertThat(delta.Up(), is(new Delta(0, -1)));
+        assertThat(Delta.Up(), is(new Delta(0, -1)));
     }
 
     @Test public void testDown()
     {
-        assertThat(delta.Down(), is(new Delta(0, +1)));
+        assertThat(Delta.Down(), is(new Delta(0, +1)));
     }
 
     @Test public void testLeft()
     {
-        assertThat(delta.Left(), is(new Delta(-1, 0)));
+        assertThat(Delta.Left(), is(new Delta(-1, 0)));
     }
 
     @Test public void testRight()
     {
-        assertThat(delta.Right(), is(new Delta(+1, 0)));
+        assertThat(Delta.Right(), is(new Delta(+1, 0)));
+    }
+
+    @Test public void testStay()
+    {
+        assertThat(Delta.Stay(), is(new Delta(0, 0)));
     }
 
     @Test public void testEquals()

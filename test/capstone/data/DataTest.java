@@ -196,4 +196,9 @@ public class DataTest
 
         assertThat(Data.get(properties, "key"), is("value"));
     }
+
+    @Test public void testGetNameReturnsCorrectFileName()
+    {
+        assertThat(Data._getName(new File("abc.def.ghi")), is("ghi"));
+    }
 }

@@ -39,7 +39,7 @@ public class ProfileCreationWindow extends Widget
         _createBottomButtons();
     }
 
-    public Profile getProfile()
+    public Profile profile()
     {
         return _profile;
     }
@@ -48,7 +48,7 @@ public class ProfileCreationWindow extends Widget
     {
         InputWidget idWidget = new InputWidget("ID:       ", "[\\w-]+");
 
-        add(idWidget.hook());
+        add(idWidget);
 
         return idWidget;
     }
@@ -57,7 +57,7 @@ public class ProfileCreationWindow extends Widget
     {
         InputWidget realNameWidget = new InputWidget("Real Name:", "[\\w- ]+");
 
-        add(realNameWidget.hook());
+        add(realNameWidget);
 
         return realNameWidget;
     }
@@ -132,10 +132,10 @@ public class ProfileCreationWindow extends Widget
         if (! _realNameWidget.validate()) return false;
         if (! _representationWidget.validate()) return false;
 
-        if (_keyMapWidget.widget().item() != null)
+        if (_keyMapWidget.widget().item() == null)
         {
             MessageBox.showMessageBox(
-                    getOwner(),
+                    getWindow().getOwner(),
                     "Invalid Input",
                     "Please select an item for 'Keys'"
             );

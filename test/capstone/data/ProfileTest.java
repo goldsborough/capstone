@@ -3,6 +3,7 @@ package capstone.data;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
+import capstone.element.Direction;
 import capstone.element.Player;
 import capstone.ui.InputKey;
 import capstone.utility.KeyMap;
@@ -12,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Map;
 import java.util.Properties;
 
@@ -22,8 +22,6 @@ import java.util.Properties;
 public class ProfileTest
 {
     private Profile profile;
-    private Calendar before;
-    private Calendar after;
     private Representation representation;
 
     private static <K, V> void assertContains(Map<K, V> map, K key, V value)
@@ -35,10 +33,6 @@ public class ProfileTest
     @Before
     public void setUp()
     {
-        // Minute could pass while we create the profile,
-        // so we will check that it equals the time before OR after
-        before = Profile.currentTime();
-
         representation = new Representation(
                 '',
                 Terminal.Color.RED,
@@ -51,8 +45,6 @@ public class ProfileTest
                 KeyMap.Arrows(),
                 representation
         );
-
-        after = Profile.currentTime();
     }
 
     @Test public void testConstructsWell()
@@ -60,11 +52,6 @@ public class ProfileTest
         assertThat(profile.id(), is("test"));
         assertThat(profile.realName(), is("Real Name"));
         assertThat(profile.keyMap(), is(KeyMap.Arrows()));
-
-        assertTrue(
-                profile.joined().equals(before) ||
-                profile.joined().equals(after)
-        );
 
         assertThat(profile.timesPlayed(), is(0));
         assertThat(profile.representation(), is(representation));
@@ -90,22 +77,22 @@ public class ProfileTest
     {
         assertThat(
                 profile.direction(new InputKey(Key.Kind.ArrowUp)),
-                is(Player.Direction.UP)
+                is(Direction.UP)
         );
 
         assertThat(
                 profile.direction(new InputKey(Key.Kind.ArrowDown)),
-                is(Player.Direction.DOWN)
+                is(Direction.DOWN)
         );
 
         assertThat(
                 profile.direction(new InputKey(Key.Kind.ArrowLeft)),
-                is(Player.Direction.LEFT)
+                is(Direction.LEFT)
         );
 
         assertThat(
                 profile.direction(new InputKey(Key.Kind.ArrowRight)),
-                is(Player.Direction.RIGHT)
+                is(Direction.RIGHT)
         );
     }
 
@@ -161,12 +148,6 @@ public class ProfileTest
 
         assertContains(serialized, "RIGHT", "ArrowRight");
 
-        assertTrue(serialized.containsKey("joined"));
-        assertTrue(
-                serialized.get("joined").equals(Long.toString(before.getTimeInMillis())) ||
-                serialized.get("joined").equals(Long.toString(after.getTimeInMillis()))
-        );
-
         assertContains(serialized, "timesPlayed", "0");
 
         assertContains(serialized, "representation.character", "");
@@ -185,8 +166,6 @@ public class ProfileTest
         test.setProperty("DOWN", "ArrowUp");
         test.setProperty("LEFT", "ArrowRight");
         test.setProperty("RIGHT", "ArrowLeft");
-
-        test.setProperty("joined", Long.toString(Profile.currentTime().getTimeInMillis()));
 
         test.setProperty("timesPlayed", "123");
 

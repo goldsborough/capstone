@@ -24,8 +24,6 @@ public class KeyMapCreationWidget extends ListWidget<KeyMap>
 
     @Override public KeyMap item()
     {
-        System.out.println(_selected);
-
         return _selected;
     }
 
@@ -39,7 +37,7 @@ public class KeyMapCreationWidget extends ListWidget<KeyMap>
 
         Button ok = new Button("OK", () -> {
             if (_validate(textBox)) {
-                _selected = new KeyMap(textBox.text());
+                _selected = new KeyMap(textBox.text().toLowerCase());
                 associatedComboBox.text(_selected.toString());
                 super.close();
         }});
@@ -75,7 +73,7 @@ public class KeyMapCreationWidget extends ListWidget<KeyMap>
 
         _addKeyMap(KeyMap.WASD(), associatedComboBox);
 
-        _addKeyMap(new KeyMap("IKJL"), associatedComboBox);
+        _addKeyMap(new KeyMap("ijkl"), associatedComboBox);
 
         _addKeyMap(new KeyMap(
                         InputKey.Kind.F1,

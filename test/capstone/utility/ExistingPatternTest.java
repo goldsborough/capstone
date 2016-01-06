@@ -130,7 +130,7 @@ public class ExistingPatternTest
     {
         assert(pattern.isAt(0));
 
-        pattern.safeApply(point, 4, 4);
+        pattern.safeApply(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(1));
         assertThat(point.y(), is(2));
@@ -145,14 +145,14 @@ public class ExistingPatternTest
         point.x(0);
 
         // left would go negative
-        pattern.safeApply(point, 4, 4);
+        pattern.safeApply(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(0));
         assertThat(point.y(), is(2));
 
         point.y(3);
 
-        pattern.safeApply(point, 4, 4);
+        pattern.safeApply(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(0));
         assertThat(point.y(), is(3));
@@ -162,7 +162,7 @@ public class ExistingPatternTest
     {
         assert(pattern.isAt(0));
 
-        pattern.safeNext(point, 4, 4);
+        pattern.safeNext(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(1));
         assertThat(point.y(), is(2));
@@ -175,14 +175,14 @@ public class ExistingPatternTest
         point.x(0);
 
         // left would go negative
-        pattern.safeNext(point, 4, 4);
+        pattern.safeNext(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(0));
         assertThat(point.y(), is(2));
 
         point.y(3);
 
-        pattern.safeNext(point, 4, 4);
+        pattern.safeNext(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(0));
         assertThat(point.y(), is(3));
@@ -192,7 +192,7 @@ public class ExistingPatternTest
     {
         assert(pattern.isAt(0));
 
-        pattern.safePrevious(point, 4, 4);
+        pattern.safePrevious(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(1));
         assertThat(point.y(), is(2));
@@ -207,14 +207,14 @@ public class ExistingPatternTest
         point.x(0);
 
         // left would go negative
-        pattern.safePrevious(point, 4, 4);
+        pattern.safePrevious(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(0));
         assertThat(point.y(), is(2));
 
         point.y(3);
 
-        pattern.safePrevious(point, 4, 4);
+        pattern.safePrevious(point, new Region(0, 4, 4, 0));
 
         assertThat(point.x(), is(0));
         assertThat(point.y(), is(3));

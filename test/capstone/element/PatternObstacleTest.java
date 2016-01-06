@@ -8,6 +8,8 @@ import com.googlecode.lanterna.terminal.Terminal;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashSet;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
@@ -16,7 +18,7 @@ import static org.hamcrest.CoreMatchers.*;
  */
 public class PatternObstacleTest
 {
-    private DynamicObstacle obstacle;
+    private PatternObstacle obstacle;
 
     private Point point;
 
@@ -30,27 +32,19 @@ public class PatternObstacleTest
                 Terminal.Color.BLUE
         );
 
-        obstacle = new DynamicObstacle(point, representation);
+        obstacle = new PatternObstacle(point, representation);
     }
 
-    @Test public void testConstructsWell() {
-        assertNotNull(obstacle.pattern());
-    }
-
-    @Test public void testUpdateModifiesPosition()
+    @Test public void testConstructsWell()
     {
-        Point oldPoint = new Point(point);
-
-        obstacle.update();
-
-        assertThat(obstacle.point(), is(not(oldPoint)));
+        assertNotNull(obstacle.pattern());
     }
 
     @Test public void testSafeUpdateDoesNotModifyPositionWhenGoingOutOfBounds()
     {
         obstacle.point(new Point(0, 0));
 
-        obstacle.safeUpdate(new Region(0, 1, 1, 0));
+        obstacle.update(new Region(0, 1, 1, 0), new HashSet<>());
 
         assertThat(obstacle.point(), is(new Point(0, 0)));
     }

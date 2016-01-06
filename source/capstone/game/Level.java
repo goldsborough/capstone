@@ -2,16 +2,18 @@ package capstone.game;
 
 import capstone.data.Profile;
 import capstone.data.Theme;
+import capstone.element.Direction;
 import capstone.element.Element;
 import capstone.element.MysteryBox;
 import capstone.element.Player;
 import capstone.ui.StatusBar;
+import capstone.utility.Delta;
 import capstone.utility.LevelBuilder;
 import capstone.utility.LevelSize;
 import capstone.utility.Page;
 import capstone.utility.PageGrid;
+import capstone.utility.Point;
 import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -20,10 +22,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Level
 {
@@ -80,22 +81,17 @@ public class Level
         redraw();
     }
 
-    public void update(Map<String, Player.Direction> directions)
+    public void update(Map<String, Direction> directions)
     {
         _checkResize();
 
-        if (_frameCount == _difficulty.delay())
-        {
-            _page.update(_screen);
-
-            _frameCount = 0;
-        }
+        _updatePage();
 
         Page old = _page;
 
         _movePlayers(directions);
 
-        _evaluatePlayers();
+        _evaluatePlayers(directions);
 
         if (_page != old)
         {
@@ -176,9 +172,9 @@ public class Level
         return players;
     }
 
-    public Collection<Profile> hidden()
+    public List<Profile> hidden()
     {
-        return Collections.unmodifiableCollection(_hidden);
+        return Collections.unmodifiableList(_hidden);
     }
 
     public TerminalSize pageSize()
@@ -254,31 +250,70 @@ public class Level
         new LevelBuilder(this).store();
     }
 
-    private void _movePlayers(Map<String, Player.Direction> directions)
+    private void _updatePage()
     {
-        for (Map.Entry<String, Player.Direction> entry : directions.entrySet())
+        if (_frameCount++ >= _difficulty.delay())
         {
-            Player player = _IDMap.get(entry.getKey());
+            _page.update(_screen);
 
-            assert(player != null);
-
-            _move(player, entry.getValue());
+            _frameCount = 0;
         }
     }
 
-    private void _move(Player player, Player.Direction direction)
+    private void _movePlayers(Map<String, Direction> directions)
+    {
+        for (String id : directions.keySet())
+        {
+            Player player = _IDMap.get(id);
+
+            // Happens when hidden players press a key
+            if (player == null) continue;
+
+            _move(player, directions.get(id));
+        }
+    }
+
+    private void _move(Player player, Direction direction)
     {
         player.unrender(_screen, _page.region());
 
         // See if the player stood on something, e.g. entrance
         Element element = _page.at(player.point());
 
-        if (element != null) element.render(_screen, _page.region());
+        if (element != null)
+        {
+            if (element.kind() == Element.Kind.ENTRANCE && ! _hidden.isEmpty())
+            {
+                _unhidePlayer(element.point());
+            }
 
-        _page = _grid.follow(player.move(direction));
+            else element.render(_screen, _page.region());
+        }
+
+        Delta delta = new Delta(direction);
+
+        if (! player.wouldGoNegative(delta))
+        {
+            _page = _grid.follow(player.move(delta));
+        }
     }
 
-    private void _evaluatePlayers()
+    private void _unhidePlayer(Point point)
+    {
+        assert(! _hidden.isEmpty());
+
+        Iterator<Profile> iterator = _hidden.iterator();
+
+        Player player = new Player(point, iterator.next());
+
+        _IDMap.put(player.id(), player);
+
+        _players.add(player);
+
+        iterator.remove();
+    }
+
+    private void _evaluatePlayers(Map<String, Direction> directions)
     {
         for (int i = 0; i < _players.size(); )
         {
@@ -286,9 +321,14 @@ public class Level
 
             _evaluate(player);
 
-            if (player.isAlive())
+            if (player.isAlive()) ++i;
+        }
+
+        for (Player player : _players)
+        {
+            if (_page.isInside(player))
             {
-                ++i;
+                _checkPlayerCollision(player, directions);
 
                 player.render(_screen, _page.region());
             }
@@ -343,25 +383,46 @@ public class Level
             case MYSTERY_BOX:
                 _handleMysteryBox((MysteryBox) element, player);
                 break;
-
-            default:
-            {
-                for (Player other : _players)
-                {
-                    if (! player.equals(other) &&
-                            player.point().equals(other.point()))
-                    {
-                        player.goBack();
-
-                        break;
-                    }
-                }
-            }
         }
 
         if (player.isDead()) _kill(player);
 
         _page = _grid.follow(player);
+    }
+
+    private void _checkPlayerCollision(Player player,
+                                       Map<String, Direction> directions)
+    {
+        for (Player other : _players)
+        {
+            if (other == player) continue;
+
+            // If one moved onto the other (one movement at a time)
+            if (other.point().equals(player.point()))
+            {
+                if (directions.containsKey(player.id())) player.goBack();
+
+                else other.goBack();
+
+                break;
+            }
+
+            // If both moved, and they moved past each other such that
+            // the point of the player is the previous point of other
+            // and the point of other is the previouss point of the player
+            // then undo both movements, because both moved we can be sure
+            // that neither previousPoints will be null.
+            else if (directions.containsKey(player.id())          &&
+                     directions.containsKey(other.id())           &&
+                     player.point().equals(other.previousPoint()) &&
+                     other.point().equals(player.previousPoint()))
+            {
+                player.goBack();
+                other.goBack();
+
+                break;
+            }
+        }
     }
 
     private void _handleMysteryBox(MysteryBox mysteryBox, Player player)
@@ -514,7 +575,7 @@ public class Level
 
     private int _totalKeys;
 
-    private Collection<Profile> _hidden;
+    private List<Profile> _hidden;
 
     private GUIScreen _gui;
 
@@ -537,4 +598,6 @@ public class Level
     private Difficulty _difficulty;
 
     private int _frameCount;
+
+    private List<Element> _freeEntrances;
 }

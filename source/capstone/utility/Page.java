@@ -86,7 +86,9 @@ public class Page implements Iterable<Element>
         assert(element != null);
         assert(_elements.containsKey(element.point()));
 
-        remove(element.point());
+        _listOf(element).remove(element);
+
+        _elements.remove(element.point());
     }
 
     public void remove(Point point)
@@ -96,7 +98,7 @@ public class Page implements Iterable<Element>
 
         Element element = at(point);
 
-        _listOf(element).add(element);
+        _listOf(element).remove(element);
 
         _elements.remove(point);
     }
@@ -232,15 +234,19 @@ public class Page implements Iterable<Element>
         return capacity() - size();
     }
 
-    public Point freePoint()
+    public Point freePoint(Region level)
     {
         Point origin = _region.northWest();
 
-        for (int x = 0; x < _region.width(); ++x)
+        int width = Math.min(_region.width(), level.width());
+
+        int height = Math.min(_region.height(), level.height());
+
+        for (int x = 0; x < width; ++x)
         {
-            for (int y = 0; y < _region.height(); ++y)
+            for (int y = 0; y < height; ++y)
             {
-                Point point = new Point(origin.x() + x, origin.y() + y);
+                Point point = new Point(origin).move(x, y);
 
                 if (! hasAt(point)) return point;
             }
@@ -344,21 +350,11 @@ public class Page implements Iterable<Element>
 
     private void _moveDynamicObstacle(DynamicObstacle obstacle)
     {
-        Point next = obstacle.peek();
+        _elements.remove(obstacle.point());
 
-        if (_elements.containsKey(next) || ! _region.contains(next))
-        {
-            obstacle.skip();
-        }
+        obstacle.update(_region, _elements.keySet());
 
-        else
-        {
-            _elements.remove(obstacle.point());
-
-            obstacle.update();
-
-            _elements.put(obstacle.point(), obstacle);
-        }
+        _elements.put(obstacle.point(), obstacle);
     }
 
 
