@@ -6,7 +6,7 @@ Cheap Multiplayer Labyrinth game built as first-semester capstone project.
 
 ## Screenshot
 
-![:camera:]()
+![:camera:](https://raw.githubusercontent.com/goldsborough/capstone/master/docs/img/screenshot.png?token=AGIcm872JMvH85QyDyZlhkn93hxxGgWtks5WlqsEwA%3D%3D)
 
 ## Building
 
