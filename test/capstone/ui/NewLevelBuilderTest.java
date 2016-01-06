@@ -1,5 +1,6 @@
 package capstone.ui;
 
+import capstone.element.SequentialObstacle;
 import capstone.game.Level;
 import capstone.utility.LevelBuilder;
 import capstone.utility.Page;
@@ -120,6 +121,7 @@ public class NewLevelBuilderTest
     {
         Properties properties = getLayout();
 
+        properties.setProperty("Name", "Test");
         properties.setProperty("Theme", "default.theme");
 
         for (Player player : players.values())
@@ -206,7 +208,7 @@ public class NewLevelBuilderTest
                 break;
 
             case DYNAMIC_OBSTACLE:
-                element = new StaticObstacle(point, representation);
+                element = new SequentialObstacle(point, representation);
                 break;
 
             case MYSTERY_BOX:

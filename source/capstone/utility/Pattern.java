@@ -1,8 +1,5 @@
 package capstone.utility;
 
-import capstone.utility.Delta;
-import capstone.utility.Point;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

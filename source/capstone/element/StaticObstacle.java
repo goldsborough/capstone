@@ -1,7 +1,7 @@
 package capstone.element;
 
-import capstone.utility.Point;
 import capstone.data.Representation;
+import capstone.utility.Point;
 
 /**
  * Created by petergoldsborough on 12/28/15.

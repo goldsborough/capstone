@@ -1,7 +1,6 @@
 package capstone.utility;
 
 import capstone.element.Direction;
-import capstone.element.Player;
 import capstone.ui.InputKey;
 import com.googlecode.lanterna.input.Key;
 

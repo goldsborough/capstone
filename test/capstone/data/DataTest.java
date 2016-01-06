@@ -199,6 +199,6 @@ public class DataTest
 
     @Test public void testGetNameReturnsCorrectFileName()
     {
-        assertThat(Data._getName(new File("abc.def.ghi")), is("ghi"));
+        assertThat(Data._getName(new File("abc.def.ghi")), is("abc.def"));
     }
 }

@@ -5,7 +5,6 @@ import capstone.utility.Delta;
 import capstone.utility.Point;
 import capstone.utility.Region;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;

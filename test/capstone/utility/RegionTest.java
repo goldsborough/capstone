@@ -211,7 +211,7 @@ public class RegionTest
 
         assertThat(region.compareTo(new Region(0, 5, 5, 0)), is(-1));
         assertThat(region.compareTo(new Region(0, 1, 1, 0)), is(+1));
-        assertThat(region.compareTo(new Region(region))    , is(+1));
+        assertThat(region.compareTo(new Region(region))    , is(0));
     }
 
     @Test public void testConstructsWellFromWidthAndHeight()

@@ -1,7 +1,6 @@
 package capstone.utility;
 
 import capstone.element.Direction;
-import capstone.element.Player;
 
 public class Delta extends AbstractPair<Integer, Integer> implements Comparable<Delta>
 {

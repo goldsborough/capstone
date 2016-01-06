@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Created by petergoldsborough on 01/05/16.
  */
-public class RandomizedObstacle extends DynamicObstacle
+@Deprecated public class RandomizedObstacle extends DynamicObstacle
 {
     public RandomizedObstacle(Point point, Representation representation)
     {

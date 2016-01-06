@@ -281,7 +281,7 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.WASD();
 
-        String expected = "[W: UP, S: DOWN, A: LEFT, D: RIGHT]";
+        String expected = "[w: UP, s: DOWN, a: LEFT, d: RIGHT]";
 
         assertThat(map.toString(), is(expected));
     }
@@ -290,7 +290,7 @@ public class KeyMapTest
     {
         KeyMap map = KeyMap.WASD();
 
-        String expected = "[W: U, S: D, A: L, D: R]";
+        String expected = "[w: U, s: D, a: L, d: R]";
 
         assertThat(map.toStringCompressed(), is(expected));
     }

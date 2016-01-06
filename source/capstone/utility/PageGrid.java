@@ -115,7 +115,7 @@ public class PageGrid
     {
         Location location = locationOf(kind);
 
-        assert(location != null);
+        if (location == null) return null;
 
         Page page = get(location.index());
 

@@ -1,7 +1,7 @@
 package capstone.element;
 
-import capstone.utility.Point;
 import capstone.data.Representation;
+import capstone.utility.Point;
 import capstone.utility.Region;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.dialog.MessageBox;

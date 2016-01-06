@@ -6,17 +6,12 @@ package capstone.game;
 
 import capstone.data.Highscore;
 import capstone.data.Profile;
-import capstone.data.Theme;
 import capstone.element.Direction;
-import capstone.element.Player;
-import capstone.ui.LegendWidget;
+import capstone.ui.InputKey;
 import capstone.ui.LevelWindow;
 import capstone.ui.MenuWindow;
-import capstone.ui.InputKey;
-import capstone.game.Level;
 import capstone.ui.ProfileWindow;
 import capstone.ui.WelcomeWindow;
-import capstone.utility.LevelBuilder;
 import capstone.utility.StopWatch;
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.GUIScreen;
@@ -34,7 +29,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class Game
 {
@@ -193,11 +187,7 @@ public class Game
 
     private Screen _createScreen()
     {
-        TerminalAppearance style = TerminalAppearance.DEFAULT_APPEARANCE.withFont(
-                TerminalAppearance.DEFAULT_NORMAL_FONT.deriveFont((float)16)
-        );
-
-        Terminal terminal = TerminalFacade.createSwingTerminal(style);
+        Terminal terminal = TerminalFacade.createTerminal();
 
         return new Screen(terminal);
     }
@@ -209,22 +199,6 @@ public class Game
         _gui.showWindow(profileWindow, GUIScreen.Position.CENTER);
 
         List<Profile> profiles = profileWindow.profiles();
-/*
-        List<Profile> profiles = null;
-
-        try
-        {
-            profiles = new ArrayList<>();
-
-            profiles.add(new Profile(new File("resources/profiles/peter.profile")));
-        }
-
-        catch (IOException e)
-        {
-            System.out.println("I/O Error");
-            System.exit(1);
-        }
-        */
 
         _fillKeyMap(profiles);
 
@@ -253,25 +227,6 @@ public class Game
         _gui.showWindow(levelWindow, GUIScreen.Position.CENTER);
 
         return levelWindow.level();
-/*
-        Level level = null;
-
-        try
-        {
-            level = new Level(new LevelBuilder(
-                    new File("resources/layouts/test.layout"),
-                    new Theme(new File("resources/themes/default.theme")),
-                    new ArrayList<>(_profiles),
-                    _gui
-            ));
-        }
-
-        catch (IOException e)
-        {
-            System.out.println("I/O Error");
-            System.exit(1);
-        }
-*/
     }
 
     private void _storeHighscore(double time)

@@ -78,15 +78,4 @@ public class DynamicObstacleTest
 
         assertThat(obstacle.point(), is (new Point(1, 0)));
     }
-
-    @Test public void testSafeUpdateDoesNotUpdateWhenNotSupposedTo()
-    {
-        obstacle.update(region, taken);
-
-        assert(obstacle.point().equals(new Point(1, 0)));
-
-        obstacle.update(region, taken);
-
-        assertThat(obstacle.point(), is (new Point(1, 0)));
-    }
 }

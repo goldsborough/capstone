@@ -42,11 +42,13 @@ public class PatternObstacleTest
 
     @Test public void testSafeUpdateDoesNotModifyPositionWhenGoingOutOfBounds()
     {
+        Region region = new Region(0, 1, 1, 0);
+
         obstacle.point(new Point(0, 0));
 
-        obstacle.update(new Region(0, 1, 1, 0), new HashSet<>());
+        obstacle.update(region, new HashSet<>());
 
-        assertThat(obstacle.point(), is(new Point(0, 0)));
+        assertTrue(region.contains(obstacle.point()));
     }
 
     @Test public void testChangePattern()

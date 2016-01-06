@@ -3,7 +3,6 @@ package capstone.utility;
 import capstone.element.DynamicObstacle;
 import capstone.element.Element;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.ScreenWriter;
 
 import java.util.ArrayList;
 import java.util.Collection;

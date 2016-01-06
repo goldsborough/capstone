@@ -1,8 +1,8 @@
 package capstone.element;
 
-import capstone.utility.Point;
 import capstone.data.Representation;
 import capstone.data.Theme;
+import capstone.utility.Point;
 import capstone.utility.Region;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * Created by petergoldsborough on 12/28/15.

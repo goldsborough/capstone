@@ -1,15 +1,15 @@
 package capstone.data;
 
 import capstone.element.Direction;
-import capstone.utility.KeyMap;
-import capstone.element.Player;
 import capstone.ui.InputKey;
-import com.googlecode.lanterna.input.Key;
+import capstone.utility.KeyMap;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by petergoldsborough on 12/27/15.

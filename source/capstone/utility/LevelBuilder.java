@@ -4,11 +4,9 @@ import capstone.data.Data;
 import capstone.data.Profile;
 import capstone.data.Theme;
 import capstone.element.Element;
-import capstone.element.Entrance;
 import capstone.element.Player;
 import capstone.game.Level;
 import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 import java.io.File;
@@ -17,12 +15,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * Created by petergoldsborough on 01/05/16.

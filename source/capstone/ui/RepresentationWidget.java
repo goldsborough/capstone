@@ -4,9 +4,6 @@ import capstone.data.Representation;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  * Created by petergoldsborough on 12/30/15.
  */

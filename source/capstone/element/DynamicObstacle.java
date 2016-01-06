@@ -1,8 +1,8 @@
 package capstone.element;
 
+import capstone.data.Representation;
 import capstone.utility.Delta;
 import capstone.utility.Point;
-import capstone.data.Representation;
 import capstone.utility.Region;
 
 import java.util.Random;

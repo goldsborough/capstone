@@ -233,11 +233,18 @@ public class PlayerTest
         assertThat(player.point(), is(point.below()));
     }
 
-    @Test(expected=AssertionError.class)
-    public void testGoBackThrowsWhenCalledTwiceInARow()
+    @Test public void testGoBackOnlyReallyGoesBackOnce()
     {
         player.moveLeft();
+
+        assert(player.point().equals(new Point(4, 5)));
+
         player.goBack();
+
+        assertThat(player.point(), is(point));
+
         player.goBack();
+
+        assertThat(player.point(), is(point));
     }
 }

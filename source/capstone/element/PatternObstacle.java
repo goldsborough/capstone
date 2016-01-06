@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Created by petergoldsborough on 01/05/16.
  */
-public class PatternObstacle extends DynamicObstacle
+@Deprecated public class PatternObstacle extends DynamicObstacle
 {
     public PatternObstacle(Point point, Representation representation)
     {

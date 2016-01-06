@@ -1,7 +1,7 @@
 package capstone.ui;
 
-import capstone.game.Game;
 import capstone.data.Profile;
+import capstone.game.Game;
 import capstone.game.Level;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.GUIScreen;
