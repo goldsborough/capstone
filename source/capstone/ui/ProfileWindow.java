@@ -5,7 +5,6 @@ import capstone.utility.KeyMap;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.component.Button;
-import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.FileDialog;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
@@ -21,54 +20,79 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by petergoldsborough on 12/29/15.
+ * Window for selecting profiles.
  */
 public class ProfileWindow extends Widget
 {
+    /**
+     * Opens a ProfileWindow with no previous profiles.
+     */
     public ProfileWindow()
     {
         this(new ArrayList<>());
     }
 
+    /**
+     *
+     * Constructs a new ProfileWindow and adds the profiles as
+     * "already-selected". The point is that when you cancel at a later
+     * stage (e.g. level-selection) you can add the profiles the user
+     * selected before so the window looks like how you left it and you
+     * don't have to reselect all profiles.
+     *
+     * @param profiles The profiles to display as "already-selected".
+     */
     public ProfileWindow(Collection<Profile> profiles)
     {
         super("Profile Selection", Panel.Orientation.VERTICAL);
 
         assert(profiles != null);
 
-        super.setDrawShadow(false);
-
         _selected = new HashSet<>();
         _keyMaps = new HashMap<>();
 
+        // Add already selected profiles
         for (Profile profile : profiles)
         {
-            addSpace(0, 1);
+            Panel slot = _newSlot();
 
-            add(new Label(profile.id()));
+            _addProfileRemoveButton(slot, profile);
+
+            add(slot);
         }
 
         addSpace(0, 1);
 
-        _createExtraPlayerSlot();
+        // Create slot to add a player and create a bottom slot
+        if (profiles.isEmpty()) _createExtraPlayerSlot();
+
+        // Or only create a bottom slot (nicer when going back)
+        else _createBottomSlot();
     }
 
+    /**
+     * @return The selected profiles. Empty if none yet.
+     */
     public List<Profile> profiles()
     {
         return new ArrayList<>(_selected);
     }
 
 
+    /**
+     * Creates a new slot for adding a profile. Such a slot includes a button
+     * for creating a new profile or selecting an existing one. It also
+     * takes care of first removing the bottom slot (done/cancel/add-player)
+     * and then re-adding at the bottom (below the new player slot).
+     */
     private void _createExtraPlayerSlot()
     {
-        _createExtraPlayerSlot(super._newSlot());
-    }
+        Panel slot = super._newSlot();
 
-    private void _createExtraPlayerSlot(Panel slot)
-    {
         _createPlayerSlot(slot);
 
-        // Insert this slot at position of bottomslot
+        // We're inserting this slot at position of
+        // bottomSlot so we need to first remove it.
         if (_bottomSlot != null) remove(_bottomSlot);
 
         add(slot);
@@ -78,6 +102,12 @@ public class ProfileWindow extends Widget
         _createBottomSlot();
     }
 
+    /**
+     *
+     * Creates the slot for adding a new player or choosing an existing one.
+     *
+     * @param slot The slot to which to add the buttons.
+     */
     private void _createPlayerSlot(Panel slot)
     {
         _createNewProfileButton(slot);
@@ -87,6 +117,12 @@ public class ProfileWindow extends Widget
         _createExistingProfileButton(slot);
     }
 
+    /**
+     *
+     * Creates the button for creating a new profile.
+     *
+     * @param slot The slot to which to add the button.
+     */
     private void _createNewProfileButton(Panel slot)
     {
         Button button = new Button("New Profile", () -> _getNewProfile(slot));
@@ -94,6 +130,12 @@ public class ProfileWindow extends Widget
         add(slot, button, Component.Alignment.LEFT_CENTER);
     }
 
+    /**
+     *
+     * Creates th button for choosing an existing profile.
+     *
+     * @param slot The slot to which to add the button.
+     */
     private void _createExistingProfileButton(Panel slot)
     {
         Button button = new Button(
@@ -104,6 +146,10 @@ public class ProfileWindow extends Widget
         add(slot, button, Component.Alignment.RIGHT_CENTER);
     }
 
+    /**
+     * Creates the bottom slot containing the
+     * "Done", "Add Player" and "Cancel" buttons.
+     */
     private void _createBottomSlot()
     {
         _bottomSlot = new ButtonSlot(false);
@@ -122,6 +168,12 @@ public class ProfileWindow extends Widget
         add(_bottomSlot);
     }
 
+    /**
+     *
+     * Manages creating a new profile.
+     *
+     * @param slot The slot to add the created id to.
+     */
     private void _getNewProfile(Panel slot)
     {
         ProfileCreationWindow creation = new ProfileCreationWindow();
@@ -133,6 +185,12 @@ public class ProfileWindow extends Widget
         if (profile != null) _addProfile(slot, profile);
     }
 
+    /**
+     *
+     * Manages selecting an existing profile from a file dialog.
+     *
+     * @param slot The slot to which to add the selected id, if not cancelled.
+     */
     private void _getExistingProfile(Panel slot)
     {
         File file = _openFileDialog();
@@ -148,6 +206,15 @@ public class ProfileWindow extends Widget
         }
     }
 
+    /**
+     *
+     * Manages adding a new player to a slot. Handles things like duplicate
+     * profile selection and handling keymap conflicts.
+     *
+     * @param slot The slot to add the player ID to.
+     *
+     * @param profile The relevant profile.
+     */
     private void _addProfile(Panel slot, Profile profile)
     {
         assert(profile != null);
@@ -166,18 +233,25 @@ public class ProfileWindow extends Widget
             _checkKeyMapConflicts(profile);
 
             _selected.add(profile);
+
+            // For checking key-map conflicts.
             _keyMaps.put(profile.keyMap(), profile);
 
+            // Replace the two buttons for creating a profile with
+            // a new button displaying the ID of the profile. When
+            // you click on the button, the profile is de-selected
+            // again.
             slot.removeAllComponents();
 
-            add(slot, new Button(profile.id(), () -> {
-                _selected.remove(profile);
-                slot.removeAllComponents();
-                _createPlayerSlot(slot);
-            }));
+            _addProfileRemoveButton(slot, profile);
         }
     }
 
+    /**
+     * Opens a file dialog for selection.
+     *
+     * @return The selected file, if any.
+     */
     private File _openFileDialog()
     {
         return FileDialog.showOpenFileDialog(
@@ -188,6 +262,11 @@ public class ProfileWindow extends Widget
     }
 
 
+    /**
+     * Shows a message to let the user know that no profiles have
+     * been selected yet, which is bad. This happens when the user
+     * presses "Done" without having created or chosen a profile.
+     */
     private void _showEmptinessMessage()
     {
         MessageBox.showMessageBox(
@@ -197,6 +276,14 @@ public class ProfileWindow extends Widget
         );
     }
 
+    /**
+     *
+     * Checks if the profile selected has a keymap conflicting
+     * with any previously selected profile. If so, shows a warning
+     * message that one of them will not be able to move in the game.
+     *
+     * @param profile The profile to check the keymap of.
+     */
     private void _checkKeyMapConflicts(Profile profile)
     {
         Profile other = _keyMaps.get(profile.keyMap());
@@ -218,6 +305,26 @@ public class ProfileWindow extends Widget
                     message
             );
         }
+    }
+
+    /**
+     *
+     * Ads the button for removing a profile after having selected one.
+     * When a profile is de-selected, it is replaced with the slot to
+     * add a create a new profile or select an existing one.
+     *
+     * @param slot The slot to make the modifications to.
+     *
+     * @param profile The newly selected player.
+     */
+    private void _addProfileRemoveButton(Panel slot, Profile profile)
+    {
+        add(slot, new Button(profile.id(), () -> {
+            _selected.remove(profile);
+            _keyMaps.remove(profile.keyMap());
+            slot.removeAllComponents();
+            _createPlayerSlot(slot);
+        }));
     }
 
     private ButtonSlot _bottomSlot;

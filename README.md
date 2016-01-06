@@ -1,8 +1,12 @@
 # Capstone Project
 
+\
+
 [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](http://goldsborough.mit-license.org)
 
-Cheap Multiplayer Labyrinth game built as first-semester capstone project.
+Cheap multiplayer labyrinth game built as first-semester capstone project.
+
+Highlights include: it's actually very customizable! You can create your own profiles (keymap, displayed character, colors) and themes for levels.
 
 ## Screenshot
 
@@ -10,9 +14,19 @@ Cheap Multiplayer Labyrinth game built as first-semester capstone project.
 
 ## Building
 
-You can compile the source as usual with `javac` and `java`, or optionally run the `run.py` script, which gives you the option to build the project with the `-b/--build` switch and then run it either in the terminal via `-t/--terminal` or in SWING GUI using `-g/--graphical`.
+You can compile the source as usual with `javac` and `java`:
+
+`javac -cp lib/lanterna-2.1.9.jar:source source/Main.java`
+
+`java -cp :lib/lanterna-2.1.9.jar:source Main`
+
+or optionally run the `run.py` script, which gives you the option to build the project with the `-b/--build` switch and then run it either in the terminal via `-t/--terminal` or in a SWING GUI using `-g/--graphical`.
 
 You can also easily import the project into NetBeans (`nbproject`) or Intellij (`.idea`).
+
+## Testing
+
+Test coverage for non-UI classes (especially any utility/data classes) is quite high. Tests are contained in the `test` folder and can be executed with `JUnit` and `HamCrest`, both included in `test/lib`.
 
 ## Documentation
 

@@ -21,10 +21,20 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Created by petergoldsborough on 01/05/16.
+ * Takes care of all deserialization and serialization for levels.
+ * These methods were previously contained in the Level class.
+ * Refactoring is a beautiful thing.
  */
 public class LevelBuilder extends Data
 {
+    /**
+     *
+     * Constructs a LevelBuilder from a Level. You can call store() right after.
+     *
+     * For example: new LevelBuilder(level).store();
+     *
+     * @param level The level to construct this LevelBuilder from.
+     */
     public LevelBuilder(Level level)
     {
         assert(level != null);
@@ -36,9 +46,24 @@ public class LevelBuilder extends Data
             .theme(level.theme())
             .levelSize(level.size())
             .hidden(level.hidden())
-            .difficulty(level.difficulty());
+            .difficulty(level.difficulty())
+            .totalKeys(level.totalKeys());
     }
 
+    /**
+     *
+     * Constructs the LevelBuilder from a file containing properties,
+     * a list of profiles and a GUI screen.
+     *
+     * @param file The file containing the properties to deserialize.
+     *
+     * @param profiles The profiles for the level.
+     *
+     * @param gui The GUI screen on which the level will be rendered.
+     *
+     * @throws IOException for I/O badness.
+     *
+     */
     public LevelBuilder(File file,
                         List<Profile> profiles,
                         GUIScreen gui) throws IOException
@@ -46,6 +71,18 @@ public class LevelBuilder extends Data
         this(Data._load(file), profiles, gui);
     }
 
+    /**
+     *
+     * Constructs the LevelBuilder from session properties,
+     * a list of profiles and a GUI screen.
+     *
+     * @param session The properties to deserialize.
+     *
+     * @param profiles The profiles for the level.
+     *
+     * @param gui The GUI screen on which the level will be rendered.
+     *
+     */
     public LevelBuilder(Properties session,
                         List<Profile> profiles,
                         GUIScreen gui)
@@ -76,6 +113,24 @@ public class LevelBuilder extends Data
         _makeIDMap();
     }
 
+    /**
+     *
+     * Constructs the LevelBuilder from a file containing properties,
+     * a list of profiles and a GUI screen. Also sets the difficulty
+     * parameter.
+     *
+     * @param difficulty The difficulty of the Level,
+     *                   from the Level.Difficulty enum.
+     *
+     * @param file The file containing the properties to deserialize.
+     *
+     * @param profiles The profiles for the level.
+     *
+     * @param gui The GUI screen on which the level will be rendered.
+     *
+     * @throws IOException for I/O badness.
+     *
+     */
     public LevelBuilder(Level.Difficulty difficulty,
                         File file,
                         Theme theme,
@@ -92,6 +147,26 @@ public class LevelBuilder extends Data
         );
     }
 
+    /**
+     *
+     * Constructs the LevelBuilder from a file containing properties,
+     * a list of profiles and a GUI screen. Also sets the difficulty
+     * parameter.
+     *
+     * @param difficulty The difficulty of the Level,
+     *                   from the Level.Difficulty enum.
+     *
+     * @param name The naem of the level.
+     *
+     * @param layout The layout of the game, in a properties file.
+     *
+     * @param theme The Theme for the level.
+     *
+     * @param profiles The profiles for the level.
+     *
+     * @param gui The GUI screen on which the level will be rendered.
+     *
+     */
     public LevelBuilder(Level.Difficulty difficulty,
                         String name,
                         Properties layout,
@@ -133,11 +208,22 @@ public class LevelBuilder extends Data
     }
 
 
+    /**
+     * @return The theme of the level.
+     */
     public Theme theme()
     {
         return _theme;
     }
 
+    /**
+     *
+     * Sets the theme for the level.
+     *
+     * @param theme The theme that will be given to the level.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder theme(Theme theme)
     {
         assert(theme != null);
@@ -147,11 +233,22 @@ public class LevelBuilder extends Data
         return this;
     }
 
+    /**
+     * @return The name of the level.
+     */
     public String name()
     {
         return _name;
     }
 
+    /**
+     *
+     * Sets the name for the level.
+     *
+     * @param name The name that will be given to the level.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder name(String name)
     {
         assert(name != null);
@@ -161,11 +258,22 @@ public class LevelBuilder extends Data
         return this;
     }
 
+    /**
+     * @return The size of the level.
+     */
     public LevelSize levelSize()
     {
         return _levelSize;
     }
 
+    /**
+     *
+     * Sets the size that will be given to the level.
+     *
+     * @param levelSize A LevelSize instance for the level.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder levelSize(LevelSize levelSize)
     {
         assert(levelSize != null);
@@ -175,11 +283,22 @@ public class LevelBuilder extends Data
         return this;
     }
 
+    /**
+     * @return The hidden profiles that could not be put at an entrance.
+     */
     public List<Profile> hidden()
     {
         return _hidden;
     }
 
+    /**
+     *
+     * Sets the hidden profiles of the LevelBuilder.
+     *
+     * @param hidden The hidden profiles.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder hidden(List<Profile> hidden)
     {
         assert(hidden != null);
@@ -189,16 +308,30 @@ public class LevelBuilder extends Data
         return this;
     }
 
+    /**
+     * @return The map from ids to players.
+     */
     public Map<String, Player> IDMap()
     {
         return _IDMap;
     }
 
+    /**
+     * @return The active (non-hidden) players of the level.
+     */
     public List<Player> players()
     {
         return _players;
     }
 
+    /**
+     *
+     * Sets the active (non-hidden) players for the level.
+     *
+     * @param players A list of active players.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder players(List<Player> players)
     {
         assert(players != null);
@@ -208,11 +341,22 @@ public class LevelBuilder extends Data
         return this;
     }
 
+    /**
+     * @return The PageGrid of the level.
+     */
     public PageGrid grid()
     {
         return _grid;
     }
 
+    /**
+     *
+     * Sets the PageGrid for the level.
+     *
+     * @param grid An instance of the PageGrid class.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder grid(PageGrid grid)
     {
         assert(grid != null);
@@ -222,11 +366,22 @@ public class LevelBuilder extends Data
         return this;
     }
 
+    /**
+     * @return The current page in the grid.
+     */
     public Page page()
     {
         return _page;
     }
 
+    /**
+     *
+     * Sets the current page of the level.
+     *
+     * @param page The current page of the level.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder page(Page page)
     {
         assert(page != null);
@@ -236,16 +391,43 @@ public class LevelBuilder extends Data
         return this;
     }
 
+    /**
+     * @return The total number of keys in the game.
+     */
     public int totalKeys()
     {
         return _totalKeys;
     }
 
+    /**
+     *
+     * Sets the total number of keys in the level.
+     *
+     * @param totalKeys The total number of keys in the level.
+     *
+     * @return The same LevelBuilder instance.
+     */
+    public LevelBuilder totalKeys(int totalKeys)
+    {
+        _totalKeys = totalKeys;
+    }
+
+    /**
+     * @return The gui screen used to render the game on.
+     */
     public GUIScreen gui()
     {
         return _gui;
     }
 
+    /**
+     *
+     * Sets the GUI on which the level is rendered.
+     *
+     * @param gui The GUI on which the level is rendered.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder gui(GUIScreen gui)
     {
         assert(gui != null);
@@ -255,11 +437,22 @@ public class LevelBuilder extends Data
         return this;
     }
 
+    /**
+     * @return The difficulty of the level.
+     */
     public Level.Difficulty difficulty()
     {
         return _difficulty;
     }
 
+    /**
+     *
+     * Sets the difficulty of the level.
+     *
+     * @param difficulty The difficulty of the level.
+     *
+     * @return The same LevelBuilder instance.
+     */
     public LevelBuilder difficulty(Level.Difficulty difficulty)
     {
         _difficulty = difficulty;
@@ -267,11 +460,25 @@ public class LevelBuilder extends Data
         return this;
     }
 
+
+    /**
+     * Always need the profiles.
+     */
     @Override public void deserialize(Properties serialization)
     {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     *
+     * Deserializes a Level.
+     *
+     * @param serialization The properties containing the level data.
+     *
+     * @param remaining The remaining profiles to try to find in the data.
+     *
+     * @return A Collection of Elements.
+     */
     public Collection<Element> deserialize(Properties serialization,
                                            Map<String, Profile> remaining)
     {
@@ -295,17 +502,24 @@ public class LevelBuilder extends Data
         return _deserializeElements(serialization, remaining);
     }
 
+    /**
+     *
+     * Stores the level as a session in resources/sessions.
+     *
+     * @throws IOException for I/O badness.
+     */
     @Override public void store() throws IOException
     {
         super.store(new File("resources/sessions"));
     }
 
-    @Override public Properties serialize()
-    {
-        return serialize(true);
-    }
-
-    public Properties serialize(boolean withTheme)
+    /**
+     *
+     * Serializes the level.
+     *
+     * @return A Properties object containing the data.
+     */
+    public Properties serialize()
     {
         Properties properties = new Properties();
 
@@ -318,8 +532,38 @@ public class LevelBuilder extends Data
 
         properties.setProperty("Difficulty", _difficulty.toString());
 
-        if (withTheme) properties.setProperty("Theme", _theme.fileName());
+        properties.setProperty("Theme", _theme.fileName());
 
+        _serializeGrid(properties);
+
+        _serializePlayers(properties);
+
+        return properties;
+    }
+
+    /**
+     * @return The filename for the level session,
+     *         which is name-of-level_date_time.session.
+     */
+    @Override public String fileName()
+    {
+        assert(_name != null);
+
+        return String.format(
+                "%1$s_%2$tF_%2$tT.session",
+                _name,
+                new Date()
+        );
+    }
+
+    /**
+     *
+     * Helper method of serialize() to serialize the PageGrid.
+     *
+     * @param properties The properties to serialize into.
+     */
+    private void _serializeGrid(Properties properties)
+    {
         for (Page page : _grid.pages())
         {
             for (Element element : page)
@@ -330,7 +574,16 @@ public class LevelBuilder extends Data
                 );
             }
         }
+    }
 
+    /**
+     *
+     * Helper method of serialize() to serialize the players.
+     *
+     * @param properties The properties to serialize into.
+     */
+    private void _serializePlayers(Properties properties)
+    {
         for (Player player : _players)
         {
             properties.setProperty(
@@ -346,21 +599,11 @@ public class LevelBuilder extends Data
                     "hidden"
             );
         }
-
-        return properties;
     }
 
-    @Override public String fileName()
-    {
-        assert(_name != null);
-
-        return String.format(
-                "%1$s_%2$tF_%2$tT.session",
-                _name,
-                new Date()
-        );
-    }
-
+    /**
+     * Creates the IDMap by mapping ids to players.
+     */
     private void _makeIDMap()
     {
         _IDMap = new HashMap<>();
@@ -368,6 +611,14 @@ public class LevelBuilder extends Data
         _players.forEach(player -> _IDMap.put(player.id(), player));
     }
 
+    /**
+     *
+     * Attempts to deserialize the difficulty, sets it to MEDIUM if not found.
+     *
+     * @param serialization The Properties object to deserialize from.
+     *
+     * @return The difficulty.
+     */
     private Level.Difficulty _deserializeDifficulty(Properties serialization)
     {
         if (_difficulty != null) return _difficulty;
@@ -382,6 +633,19 @@ public class LevelBuilder extends Data
         else return Level.Difficulty.MEDIUM;
     }
 
+    /**
+     *
+     * Handles deserialization of elements.
+     *
+     * Side effect: _players are modified.
+     *
+     * @param serialization The properties to deserialize from.
+     *
+     * @param remaining The remaining profiles.
+     *
+     * @return A Collection of Elements.
+     *
+     */
     private Collection<Element>
     _deserializeElements(Properties serialization,
                          Map<String, Profile> remaining)
@@ -390,6 +654,10 @@ public class LevelBuilder extends Data
 
         // First need the players, so that we know
         // how many rows to reserve for the status bar.
+        // Players are stored as id:<id>=x,y|hidden
+        // so that (1) numeric ids don't clash with codes and
+        // (2), players standing on elements don't cause bad
+        // serialization and (3) players can be hidden.
         for (String key : serialization.stringPropertyNames())
         {
             if (key.startsWith("id:"))
@@ -398,15 +666,12 @@ public class LevelBuilder extends Data
 
                 _deserializePlayer(key, value, remaining);
 
+                // so that we're only left with game-elements
                 serialization.remove(key);
             }
         }
 
         Collection<Element> elements = new ArrayList<>();
-
-        // Players are stored as id:<id>=x,y
-        // so that (1) numeric ids don't clash with codes and
-        // 2, players standing on elements don't cause bad serialization
 
         for (String key : serialization.stringPropertyNames())
         {
@@ -420,17 +685,33 @@ public class LevelBuilder extends Data
         return elements;
     }
 
+    /**
+     *
+     * Deserializes a player. The player is added to _players and removed
+     * from the remaining map. At the end, there will be only players that
+     * haven't been loaded from the session. Some will be put at entrances,
+     * the rest will be hidden.
+     *
+     * @param key The key of the property.
+     *
+     * @param value The value of the property.
+     *
+     * @param remaining The non-mapped set of profiles.
+     */
     private void _deserializePlayer(String key,
                                     String value,
                                     Map<String, Profile> remaining)
     {
+        // without the 'id:'
         String id = key.substring(3);
 
         Profile profile = remaining.remove(id);
 
+        if (profile == null) return;
+
         if (value.equals("hidden")) _hidden.add(profile);
 
-        else if (profile != null)
+        else
         {
             Point point = new Point(value);
 
@@ -438,19 +719,39 @@ public class LevelBuilder extends Data
         }
     }
 
+    /**
+     *
+     * Deserializes a non-player element (a "game element").
+     *
+     * @param key The key of the property.
+     *
+     * @param value The value of the property.
+     *
+     * @return The Element that was deserialized.
+     */
     private Element _deserializeGameElement(String key, String value)
     {
         Point point = new Point(key);
 
         int code = Integer.parseInt(value);
 
+        // Get the Element kind from the code with which the elements
+        // are stored (e.g. 0 = wall)
         Element.Kind kind = Element.Kind.fromCode(code);
 
         if (kind == Element.Kind.KEY) ++_totalKeys;
 
+        // Call the factory method
         return Element.Create(kind, point, _theme);
     }
 
+    /**
+     *
+     * Handles loading the theme associated with
+     * the level stored in the session.
+     *
+     * @param serialization The properties to deserialize from.
+     */
     private void _loadTheme(Properties serialization)
     {
         File file = new File(
