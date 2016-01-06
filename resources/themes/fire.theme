@@ -1,0 +1,24 @@
+#capstone.data.Theme
+#Wed Jan 06 03:27:25 CET 2016
+MYSTERY_BOX.foreground=RED
+WALL.background=RED
+MYSTERY_BOX.character=?
+ENTRANCE.foreground=YELLOW
+KEY.foreground=MAGENTA
+DYNAMIC_OBSTACLE.foreground=RED
+STATIC_OBSTACLE.foreground=YELLOW
+MYSTERY_BOX.background=MAGENTA
+STATIC_OBSTACLE.background=GREEN
+WALL.character=+
+EXIT.character=*
+EXIT.foreground=BLUE
+DYNAMIC_OBSTACLE.character=\!
+STATIC_OBSTACLE.character=\#
+WALL.foreground=RED
+EXIT.background=WHITE
+ENTRANCE.background=GREEN
+KEY.background=WHITE
+ENTRANCE.character=^
+DYNAMIC_OBSTACLE.background=WHITE
+KEY.character=$
+name=fire

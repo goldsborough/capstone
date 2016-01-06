@@ -2,15 +2,17 @@
  * Created by petergoldsborough on 12/26/15.
  */
 
-package capstone;
+package capstone.game;
 
 import capstone.data.Highscore;
 import capstone.data.Profile;
 import capstone.data.Theme;
 import capstone.element.Player;
+import capstone.ui.LegendWidget;
 import capstone.ui.MenuWindow;
 import capstone.ui.InputKey;
-import capstone.ui.Level;
+import capstone.game.Level;
+import capstone.utility.LevelBuilder;
 import capstone.utility.StopWatch;
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.GUIScreen;
@@ -87,6 +89,8 @@ public class Game
                 directions.clear();
             }
         }
+
+        System.out.println("?");
 
         _endGame();
     }
@@ -236,12 +240,12 @@ public class Game
 
         try
         {
-            level = new Level(
-                    new File("resources/layouts/level_big_sparse.layout"),
+            level = new Level(new LevelBuilder(
+                    new File("resources/layouts/test.layout"),
                     new Theme(new File("resources/themes/default.theme")),
                     new ArrayList<>(_profiles),
                     _gui
-            );
+            ));
         }
 
         catch (IOException e)
@@ -303,6 +307,16 @@ public class Game
         if (key == null) return;
 
         if (key.getKind() == Key.Kind.Escape) new MenuWindow(this);
+
+        else if (key.getKind() == Key.Kind.Backspace)
+        {
+            _gui.showWindow(
+                    new LegendWidget(_level.theme()),
+                    GUIScreen.Position.CENTER
+            );
+
+            _level.redraw();
+        }
 
         else _processKey(key, directions);
     }

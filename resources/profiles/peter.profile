@@ -9,5 +9,4 @@ representation.character=\uF8FF
 RIGHT=ArrowRight
 DOWN=ArrowDown
 timesPlayed=0
-joined=1451505480000
 UP=ArrowUp

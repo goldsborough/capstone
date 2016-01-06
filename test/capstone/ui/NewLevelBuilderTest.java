@@ -38,7 +38,7 @@ import java.util.Properties;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
-public class NewLevelTest
+public class NewLevelBuilderTest
 {
     private static final int dimension = 5;
 
