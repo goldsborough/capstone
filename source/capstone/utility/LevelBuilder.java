@@ -411,7 +411,7 @@ public class LevelBuilder extends Data
     {
         _totalKeys = totalKeys;
 
-        return LevelBuilder;
+        return this;
     }
 
     /**
