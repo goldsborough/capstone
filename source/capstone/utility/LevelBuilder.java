@@ -124,6 +124,8 @@ public class LevelBuilder extends Data
      *
      * @param file The file containing the properties to deserialize.
      *
+     * @param theme The theme for the level.
+     *
      * @param profiles The profiles for the level.
      *
      * @param gui The GUI screen on which the level will be rendered.

@@ -423,6 +423,8 @@ public class PageGrid
      * operation, but requires some temporary extra space because two
      * grids exist until the old one has been emptied into the new one.
      *
+     * @param levelSize The new levelSize.
+     *
      * @param terminalSize The new terminal size.
      */
     public void resize(LevelSize levelSize, TerminalSize terminalSize)

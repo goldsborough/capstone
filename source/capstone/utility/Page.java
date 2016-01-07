@@ -490,6 +490,8 @@ public class Page implements Iterable<Element>
      * The reason for the levelRegion parameter is
      * the same as for the freePoint() method.
      *
+     * @param levelRegion The region of the level.
+     *
      * @return All the free points on the page.
      *
      * @see Page#freePoint

@@ -160,7 +160,11 @@ public class ThemeCreationWidget extends Widget
     }
 
     /**
-     * @return
+     *
+     * Creates the Theme from the input-widgets and stores it to disk.
+     *
+     * @return  The Theme created from the Representations extracted
+     *          from the various RepresentationWidgets.
      */
     private Theme _makeTheme()
     {
@@ -184,7 +188,7 @@ public class ThemeCreationWidget extends Widget
 
         try
         {
-            theme.store(new File("resources/themes"));
+            theme.store();
 
         } catch (IOException e) { _showIOErrorBox(); }
 
