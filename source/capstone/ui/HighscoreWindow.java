@@ -8,10 +8,16 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by petergoldsborough on 12/31/15.
+ * A Window for selecting a level and showing a HighscoreWidget
+ * for that level (the HighscoreWidget shows the entries of the
+ * Highscore object associated with the file).
  */
 public class HighscoreWindow extends Widget
 {
+    /**
+     * Constructs a new HighscoreWindow with a button to select
+     * the level or be "Done".
+     */
     public HighscoreWindow()
     {
         super("Highscores");
@@ -22,9 +28,14 @@ public class HighscoreWindow extends Widget
 
         addSpace(0, 2);
 
-        add(new Button("Done", super::close));
+        add(new ButtonSlot(ButtonSlot.Kind.DONE));
     }
 
+    /**
+     * Selects a highscore by loading the file and opening
+     * a HighscoreWidget to display the entries in the Highscore.
+     * MVC 4 life :)))
+     */
     private void _selectLevel()
     {
         File file = _openFileDialog("resources/highscores", "Level");

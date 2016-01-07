@@ -752,6 +752,8 @@ public class LevelBuilder extends Data
      * Handles loading the theme associated with
      * the level stored in the session.
      *
+     * Sets the _theme field.
+     *
      * @param serialization The properties to deserialize from.
      */
     private void _loadTheme(Properties serialization)
@@ -769,16 +771,34 @@ public class LevelBuilder extends Data
         catch (IOException e) { System.out.println("Error reading theme!"); }
     }
 
+    /**
+     *
+     * Takes a collection of profiles and attempts to place them at
+     * the entrances of the level. If an entrance is found, a Player
+     * is constructed with the point of the entrance and the profile.
+     *
+     * Profiles that were not matched to entrances are put into the
+     * _hidden collection, so that they can be revealed by the Level
+     * when the players at the entrances leave their entrance.
+     *
+     * @param profiles The profiles
+     */
     private void _placeAtEntrances(Collection<Profile> profiles)
     {
         assert(profiles != null);
 
         Iterator<Profile> iterator = profiles.iterator();
 
+        // Iterate over the grid, look for
+        // the entrances on each page
         for (Page page : _grid.pages())
         {
             for (Element entrance : page.entrances())
             {
+                // Precedence for the profiles that were not hidden
+                // when the session was stored, or that were just
+                // newly registered for the Game and passed to the
+                // constructor of LevelBuilder.
                 if (! profiles.isEmpty())
                 {
                     Point point = entrance.point();
@@ -788,6 +808,10 @@ public class LevelBuilder extends Data
                     iterator.remove();
                 }
 
+                // Then check if there is space for the players that
+                // were hidden when the session was stored, e.g. because
+                // a player that was active during the level was now
+                // not registered for the Game.
                 else if (! _hidden.isEmpty())
                 {
                     Point point = entrance.point();
@@ -804,13 +828,36 @@ public class LevelBuilder extends Data
         _hidden.addAll(profiles);
     }
 
-    private PageGrid _setupGrid(Collection<Element> elements, int players)
+    /**
+     *
+     * Constructs the PageGrid.
+     *
+     * @param elements The elements for the PageGrid.
+     *
+     * @param numberOfPlayers The number of players in the game, to determine
+     *                        how much space to leave for the status bar.
+     *
+     * @return The created PageGrid.
+     */
+    private PageGrid _setupGrid(Collection<Element> elements,
+                                int numberOfPlayers)
     {
-        TerminalSize terminalSize = _pageSize(players);
+        // _pageSize gets us the size for the pages, i.e. the
+        // terminalSize with space for the players and the level status
+        TerminalSize terminalSize = _pageSize(numberOfPlayers);
 
         return new PageGrid(_levelSize, terminalSize, elements);
     }
 
+    /**
+     *
+     * Handle fetching the relevant initial page.
+     *
+     * That page is either the page *one of* (random) the players is on,
+     * or else the page at (0, 0) if there are no players.
+     *
+     * @return The initial Page.
+     */
     private Page _fetchPage()
     {
         if (! _players.isEmpty())
@@ -818,9 +865,22 @@ public class LevelBuilder extends Data
             return _grid.fetchPageOf(_players.get(0));
         }
 
+        // The currentPage() of a newly constructed Grid is
+        // the page at (0, 0)
         else return _grid.currentPage();
     }
 
+    /**
+     *
+     * Calculates the TerminalSize that the PageGrid should know of,
+     * i.e. the size of one page on the screen. That size is the regular
+     * TerminalSize, minus some rows for the level status and status for
+     * all the players.
+     *
+     * @param remaining The number of remaining players.
+     *
+     * @return The proper TerminalSize, with space left for the StatusBar.
+     */
     private TerminalSize _pageSize(int remaining)
     {
         TerminalSize size = _gui.getScreen().getTerminalSize();
@@ -838,12 +898,22 @@ public class LevelBuilder extends Data
         // Hidden players that were mapped during deserialization.
         rows -= _hidden.size();
 
-        // Players that weren't mapped.
+        // Players that weren't mapped (this method has to be
+        // called before those remaining players were placed at
+        // entrances or hidden)
         rows -= remaining;
 
         return new TerminalSize(columns, rows);
     }
 
+    /**
+     *
+     * Maps a list profiles to a Map from the player IDs to the profiles.
+     *
+     * @param profiles A list of profiles.
+     *
+     * @return The mapping from id to profile.
+     */
     private Map<String, Profile> _map(List<Profile> profiles)
     {
         Map<String, Profile> map = new HashMap<>();

@@ -352,9 +352,11 @@ public class ExistingPageTest
         ));
     }
 
-    @Test public void testFreeSpace()
+    @Test public void testFreeSpaceReturnsTheRightElementsWhenTheLevelRegionIsGreater()
     {
-        Set<Point> free = new HashSet<>(page.freeSpace());
+        Collection<Point> temp = page.freeSpace(new Region(0, 100, 100, 0));
+
+        Set<Point> free = new HashSet<>(temp);
 
         for (int x = 0; x < 10; ++x)
         {
@@ -370,11 +372,29 @@ public class ExistingPageTest
         }
     }
 
+    @Test public void testFreeSpaceReturnsTheRightElementsWhenTheLevelRegionIsSmaller()
+    {
+        Collection<Point> temp = page.freeSpace(new Region(0, 1, 1, 0));
+
+        assertFalse(temp.contains(wall.point()));
+        assertFalse(temp.contains(exit.point()));
+
+        assertTrue(temp.contains(new Point(0, 1)));
+        assertTrue(temp.contains(new Point(1, 1)));
+    }
+
     @Test public void testFreePoint()
     {
         Point free = page.freePoint(page.region());
 
         assertFalse(page.hasAt(free));
+    }
+
+    @Test public void testAmountOfFreeSpace()
+    {
+        int expected = page.region().area() - page.size();
+
+        assertThat(page.amountOfFreeSpace(), is(expected));
     }
 }
 

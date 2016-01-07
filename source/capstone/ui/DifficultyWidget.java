@@ -3,10 +3,13 @@ package capstone.ui;
 import capstone.game.Level;
 
 /**
- * Created by petergoldsborough on 01/05/16.
+ * A Widget to select the difficulty of a level.
  */
 public class DifficultyWidget extends ListWidget<Level.Difficulty>
 {
+    /**
+     * Constructs a new DifficultyWidget.
+     */
     public DifficultyWidget()
     {
         super("Select Difficulty", false);
@@ -19,6 +22,9 @@ public class DifficultyWidget extends ListWidget<Level.Difficulty>
         add(new ButtonSlot(ButtonSlot.Kind.CANCEL));
     }
 
+    /**
+     * @return The selected difficulty, if any yet.
+     */
     public Level.Difficulty difficulty()
     {
         return _selected;

@@ -1,8 +1,5 @@
 package capstone.utility;
 
-import capstone.utility.Delta;
-import capstone.utility.Pattern;
-import capstone.utility.Point;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +33,7 @@ public class ExistingPatternTest
     @Test public void testAccess()
     {
         assertTrue(pattern.isAt(0));
-        assertThat(pattern.position(), is(0));
+        assertThat(pattern.index(), is(0));
 
         assertThat(pattern.at(0), is(Delta.Left()));
         assertThat(pattern.at(1), is(Delta.Left()));
@@ -52,7 +49,7 @@ public class ExistingPatternTest
         pattern.jumpTo(1);
 
         assertTrue(pattern.isAt(1));
-        assertThat(pattern.position(), is(1));
+        assertThat(pattern.index(), is(1));
     }
 
     @Test(expected=AssertionError.class)
