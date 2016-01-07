@@ -15,7 +15,7 @@ public class Dimensions extends AbstractPair<Integer, Integer>
         super(other);
     }
 
-    public int width()
+    public Integer width()
     {
         return super.first();
     }
@@ -27,7 +27,7 @@ public class Dimensions extends AbstractPair<Integer, Integer>
         super.first(width);
     }
 
-    public int height()
+    public Integer height()
     {
         return super.second();
     }

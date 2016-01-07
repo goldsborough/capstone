@@ -296,7 +296,7 @@ public class ExistingPageGridTest
 
     @Test public void testFindFreeSpaceForNonFullLevel()
     {
-        PageGrid.Location location = grid.findFreeSpace();
+        PageGrid.Location location = grid.findFreePoint();
 
         assertNotNull(location);
 
@@ -307,22 +307,9 @@ public class ExistingPageGridTest
     {
         fill();
 
-        PageGrid.Location location = grid.findFreeSpace();
+        PageGrid.Location location = grid.findFreePoint();
 
         assertNull(location);
-    }
-
-    @Test public void testFollow()
-    {
-        grid.fetch(0, 0);
-
-        assertThat(grid.currentIndex(), is(new Index(0, 0)));
-
-        Element outside = new Wall(new Point(2, 0), representation);
-
-        grid.follow(outside);
-
-        assertThat(grid.currentIndex(), is(new Index(1, 0)));
     }
 
     @Test public void testFetchAboveReturnsCorrectPageWhenIsPossible()
