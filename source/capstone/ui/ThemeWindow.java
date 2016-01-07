@@ -9,57 +9,61 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by petergoldsborough on 12/30/15.
+ * The Window managing Themes. This Window is responsible for showing the
+ * ThemeCreationWidget if the user wishes to create a new Theme, or else
+ * for opening a FileDialog. It is expected to yield a Theme.
  */
 public class ThemeWindow extends Widget
 {
+    /**
+     * Constructs a new ThemeWindow.
+     *
+     * A ThemeWindow has an "Existing Theme" Button, a "New Theme" Button
+     * and some utility buttons at the bottom (CANCEL and EXIT).
+     */
     public ThemeWindow()
     {
         super("Theme Selection");
 
         addSpace(0, 2);
 
-        _createNewThemeButton();
+        add(new Button("Existing Theme", this::_getExistingTheme));
 
         addSpace(0, 2);
 
-        _createExistingThemeButton();
+        add(new Button("New Theme", this::_getNewTheme));
 
         addSpace(0, 2);
 
         _createBottomButtons(true);
     }
 
-    public Theme theme() {
-
+    /**
+     * @return The Theme collected, if any, else null.
+     */
+    public Theme theme()
+    {
         return _theme;
     }
 
-    private void _createNewThemeButton()
-    {
-        Button button = new Button("New Theme", this::_getNewTheme);
-
-        add(button);
-    }
-
+    /**
+     * Handles creating a new Theme by opening the ThemeCreationWidget.
+     */
     private void _getNewTheme()
     {
-        ThemeCreationWindow creation = new ThemeCreationWindow();
+        ThemeCreationWidget creation = new ThemeCreationWidget();
 
         getOwner().showWindow(creation, GUIScreen.Position.CENTER);
 
+        // May be null, of course.
         _theme = creation.theme();
 
         this.close();
     }
 
-    private void _createExistingThemeButton()
-    {
-        Button button = new Button("Existing Theme", this::_getExistingTheme);
-
-        add(button);
-    }
-
+    /**
+     * Handles getting an existing Theme from the resources/themes folder.
+     */
     private void _getExistingTheme()
     {
         File file = FileDialog.showOpenFileDialog(
@@ -68,6 +72,7 @@ public class ThemeWindow extends Widget
                 "Choose Theme"
         );
 
+        // If the user cancelled, just return to the window.
         if (file == null) return;
 
         try

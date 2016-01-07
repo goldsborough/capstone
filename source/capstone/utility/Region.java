@@ -261,6 +261,8 @@ public class Region extends AbstractPair<Point, Point> implements Comparable<Reg
      */
     public boolean contains(Point point)
     {
+        assert(point != null);
+
         if (point.x() < southWest().x()) return false;
 
         if (point.x() > northEast().x()) return false;

@@ -253,6 +253,8 @@ public class Page implements Iterable<Element>
      */
     public boolean isOutside(Element element)
     {
+        assert(element != null);
+
         return isOutside(element.point());
     }
 
@@ -270,6 +272,8 @@ public class Page implements Iterable<Element>
      */
     public boolean isOutside(Point point)
     {
+        assert(point != null);
+
         return ! _region.contains(point);
     }
 
@@ -288,6 +292,8 @@ public class Page implements Iterable<Element>
      */
     public boolean isInside(Element element)
     {
+        assert(element != null);
+
         return isInside(element.point());
     }
 
@@ -305,6 +311,8 @@ public class Page implements Iterable<Element>
      */
     public boolean isInside(Point point)
     {
+        assert(point != null);
+
         return _region.contains(point);
     }
 

@@ -5,21 +5,28 @@ import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
 
 /**
- * Created by petergoldsborough on 12/31/15.
+ * A Widget to display the entries of the highscore for a level, i.e. the
+ * view for the Highscore class in the MVC model.
  */
 public class HighscoreWidget extends Widget
 {
+    /**
+     *
+     * Constructs a new HighscoreWidget from the given Highscore object.
+     *
+     * @param highscore The Highscore object to create this HighscoreWidget for.
+     */
     public HighscoreWidget(Highscore highscore)
     {
         super(highscore.level());
 
         addSpace(0, 1);
 
-        int place = 1;
+        int ranking = 1;
 
         for (Highscore.Entry entry : highscore)
         {
-            _addEntry(place++, entry);
+            _addEntry(ranking++, entry);
         }
 
         addSpace(0, 1);
@@ -27,17 +34,29 @@ public class HighscoreWidget extends Widget
         add(new ButtonSlot(ButtonSlot.Kind.DONE));
     }
 
-    private void _addEntry(int place, Highscore.Entry entry)
+    /**
+     *
+     * Adds a new entry-view to the widget.
+     *
+     * @param ranking The ranking of this entry int he highscore.
+     *
+     * @param entry The entry to add a view for.
+     */
+    private void _addEntry(int ranking, Highscore.Entry entry)
     {
+        // Create a new slot
         Panel slot = super._newSlot();
 
-        add(slot, new Label(place + ":"));
+        // The format is ranking: time players
+        // e.g. 1: 1.533s peter, borat
+
+        add(slot, new Label(ranking + ":"));
 
         add(slot, new Label(String.format("%1$.3fs", entry.time())));
 
         String players = entry.players().toString();
 
-        // Without the square brackets of list representation
+        // Without the square brackets of the list representation
         add(slot, new Label(players.substring(1, players.length() - 1)));
 
         add(slot);

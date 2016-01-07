@@ -5,27 +5,56 @@ import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
 
 /**
- * Created by petergoldsborough on 12/30/15.
+ * A Widget that is a slot with a Label and another Widget.
+ * The Label is supposed to give the Widget a "name", therefore
+ * this class is called NamedWidget. The Label is placed to the
+ * left of the Widget.
+ *
+ * @param <W> The Widget to give a name.
  */
 public class NamedWidget<W extends Widget> extends Widget
 {
-    public NamedWidget(String title, W widget)
+
+    /**
+     *
+     * Constructs a new NamedWidget with the given name and Widget.
+     *
+     * @param name The name to give the Widget, i.e. what is displayed
+     *             in the label to the left of the Widget.
+     *
+     * @param widget The Widget to give a name and to put to the right
+     *               of the Label.
+     */
+    public NamedWidget(String name, W widget)
     {
-        super(title, Panel.Orientation.HORISONTAL);
+        super(name, Panel.Orientation.HORISONTAL);
 
         _label = _createLabel();
 
-        this.title(title);
+        this.name(name);
         this.widget(widget);
     }
 
+    /**
+     * @return The Widget that is given a name by this NamedWidget.
+     */
     public W widget()
     {
         return _widget;
     }
 
+    /**
+     *
+     * Sets the Widget that is given a name by
+     * this NamedWidget to a new Widget.
+     *
+     * @param widget The new Widget that will be
+     *               given a name by the NamedWidget.
+     */
     public void widget(W widget)
     {
+        assert(widget != null);
+
         if (_widget != null)
         {
             _panel.removeComponent(_widget.hook());
@@ -36,19 +65,36 @@ public class NamedWidget<W extends Widget> extends Widget
         super.add(_widget.hook(), Component.Alignment.RIGHT_CENTER);
     }
 
-    public String title()
+    /**
+     *
+     * The name is the content of the Label.
+     *
+     * @return The name of the NamedWidget.
+     */
+    public String name()
     {
         return _label.getText();
     }
 
-    public void title(String title)
+    /**
+     *
+     * Sets the name for the NamedWidget.
+     *
+     * The name is the content of the Label.
+     *
+     * @param name The new name for the NamedWidget.
+     */
+    public void name(String name)
     {
-        assert(title != null);
+        assert(name != null);
         assert(_label != null);
 
-        _label.setText(title);
+        _label.setText(name);
     }
 
+    /**
+     * @return A Label with a LEFT_CENTER aligment.
+     */
     protected Label _createLabel()
     {
         Label label = new Label();

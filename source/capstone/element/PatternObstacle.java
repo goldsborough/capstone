@@ -14,7 +14,7 @@ import java.util.Set;
  * to a finite-state-machine. Not really so good, especially in
  * dense levels it's so common that a pattern obstacle will have
  * such a pattern that it's just awkwardly stuck. So deprecated
- * in favor of the SequentialObstacle.
+ * in favor of the IntelligentObstacle.
  */
 @Deprecated public class PatternObstacle extends DynamicObstacle
 {

@@ -10,8 +10,21 @@ import java.io.File;
 import java.io.IOException;
 
 
+/**
+ *
+ * The Window for creating a profile.
+ *
+ * A profile can be created from an ID, a real name,
+ * a Representation and a KeyMap.
+ *
+ */
 public class ProfileCreationWindow extends Widget
 {
+    /**
+     * Constructs a new ProfileCreationWindow with an input
+     * field for the Profile's ID abd real-name, a Button for
+     * a RepresentationWidget and a KeyMapCreationWidget.
+     */
     public ProfileCreationWindow()
     {
         super("New Profile", Panel.Orientation.VERTICAL);
@@ -39,13 +52,20 @@ public class ProfileCreationWindow extends Widget
         _createBottomButtons();
     }
 
+    /**
+     * @return The profile created, if any was created, else null.
+     */
     public Profile profile()
     {
         return _profile;
     }
 
+    /**
+     * @return An InputWidget for the ID.
+     */
     private InputWidget _createIdWidget()
     {
+        // Allow only word characters (a-zA-Z0-9_) and hyphens
         InputWidget idWidget = new InputWidget("ID:       ", "[\\w-]+");
 
         add(idWidget);
@@ -53,8 +73,13 @@ public class ProfileCreationWindow extends Widget
         return idWidget;
     }
 
+    /**
+     *
+     * @return An InputWidget for the user's real-name.
+     */
     private InputWidget _createRealNameWidget()
     {
+        // Allow only word characters (a-zA-Z0-9_) and hyphens
         InputWidget realNameWidget = new InputWidget("Real Name:", "[\\w- ]+");
 
         add(realNameWidget);
@@ -62,22 +87,9 @@ public class ProfileCreationWindow extends Widget
         return realNameWidget;
     }
 
-    private NamedWidget<ComboBox<KeyMap>> _createKeyMapWidget()
-    {
-        ComboBox<KeyMap> combo = new ComboBox<>();
-
-        combo.listWidget(new KeyMapCreationWidget(combo));
-
-        NamedWidget<ComboBox<KeyMap>> keyMapWidget = new NamedWidget<>(
-                "Keys",
-                combo
-        );
-
-        add(keyMapWidget);
-
-        return keyMapWidget;
-    }
-
+    /**
+     * @return A RepresentationWidget for creating the Profile's Representation.
+     */
     private RepresentationWidget _createRepresentationWidget()
     {
         RepresentationWidget widget = new RepresentationWidget();
@@ -87,6 +99,30 @@ public class ProfileCreationWindow extends Widget
         return widget;
     }
 
+    /**
+     * @return A new named combo-box for creating a KeyMap.
+     */
+    private NamedWidget<ComboBox<KeyMap>> _createKeyMapWidget()
+    {
+        ComboBox<KeyMap> combo = new ComboBox<>();
+
+        combo.listWidget(new KeyMapCreationWidget(combo));
+
+        NamedWidget<ComboBox<KeyMap>> keyMapWidget
+                = new NamedWidget<>("Keys", combo);
+
+        add(keyMapWidget);
+
+        return keyMapWidget;
+    }
+
+    /**
+     * Create the buttons at the bottom of the window.
+     *
+     * Those buttons are a button to create the profile (which also
+     * validates the input), then a button to cancel the creation
+     * and lastly a button to exit the program.
+     */
     protected void _createBottomButtons()
     {
         ButtonSlot slot = new ButtonSlot(false);
@@ -100,6 +136,10 @@ public class ProfileCreationWindow extends Widget
         add(slot);
     }
 
+    /**
+     * @return A Button that validates the input and,
+     *         if the input was valid, calls _makeProfile().
+     */
     private Button _createCreateButton()
     {
         return new Button("Create", () -> {
@@ -110,6 +150,10 @@ public class ProfileCreationWindow extends Widget
         });
     }
 
+    /**
+     * Fetches the data from the various widgets and creates a Profile,
+     * which it also tries to store under resources/profiles.
+     */
     private void _makeProfile()
     {
         _profile = new Profile(
@@ -121,11 +165,18 @@ public class ProfileCreationWindow extends Widget
 
         try
         {
-            _profile.store(new File("resources/profiles"));
+            _profile.store();
 
         } catch (IOException e) { _showIOErrorBox(); }
     }
 
+    /**
+     *
+     * Validates the various input fields.
+     *
+     * @return True if all the input is valid and it is
+     *         safe to create a Profile, else false.
+     */
     private boolean _validateInput()
     {
         if (! _idWidget.validate()) return false;

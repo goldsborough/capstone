@@ -53,7 +53,6 @@ public class ProfileTest
         assertThat(profile.realName(), is("Real Name"));
         assertThat(profile.keyMap(), is(KeyMap.Arrows()));
 
-        assertThat(profile.timesPlayed(), is(0));
         assertThat(profile.representation(), is(representation));
     }
 
@@ -62,15 +61,6 @@ public class ProfileTest
         Profile copy = new Profile(profile);
 
         assertThat(copy, is(profile));
-    }
-
-    @Test public void testIncrementsTimesPlayedWhenPlayedAGameIsCalled()
-    {
-        int before = profile.timesPlayed();
-
-        profile.playedAGame();
-
-        assertThat(profile.timesPlayed(), is(before + 1));
     }
 
     @Test public void testDirection()

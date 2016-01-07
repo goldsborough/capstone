@@ -1,6 +1,6 @@
 package capstone.ui;
 
-import capstone.element.SequentialObstacle;
+import capstone.element.IntelligentObstacle;
 import capstone.game.Level;
 import capstone.utility.LevelBuilder;
 import capstone.utility.Page;
@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 public class NewLevelBuilderTest
@@ -208,7 +207,7 @@ public class NewLevelBuilderTest
                 break;
 
             case DYNAMIC_OBSTACLE:
-                element = new SequentialObstacle(point, representation);
+                element = new IntelligentObstacle(point, representation);
                 break;
 
             case MYSTERY_BOX:

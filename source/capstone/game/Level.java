@@ -258,7 +258,7 @@ public class Level
     /**
      *
      * Returns the size of a page on the screen, i.e. the terminalSize
-     * without the rows for the statusbar.
+     * without the rows for the status-bar.
      *
      * @return The size of a page on the screen.
      */
@@ -266,19 +266,10 @@ public class Level
     {
         TerminalSize size = _screen.getTerminalSize();
 
-        int columns = size.getColumns();
-
-        int rows = size.getRows();
-
-        rows -= 1; // level information
-
-        rows -= _players.size();
-
-        rows -= _deadPlayers.size();
-
-        if (_hidden != null) rows -= _hidden.size();
-
-        return new TerminalSize(columns, rows);
+        return new TerminalSize(
+                size.getColumns(),
+                size.getRows() - _statusBar.requiredRows()
+        );
     }
 
     /**

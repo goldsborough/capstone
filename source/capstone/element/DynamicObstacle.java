@@ -21,7 +21,7 @@ public abstract class DynamicObstacle extends Element
      *
      * Factory-method to create a random dynamic-obstacle concrete-object.
      *
-     * All dynamic-obstacle types except SequentialObstacle
+     * All dynamic-obstacle types except IntelligentObstacle
      * are deprecated so basically don't use this method.
      *
      * @param point The point to construct the dynamic-obstacle at.
@@ -39,7 +39,7 @@ public abstract class DynamicObstacle extends Element
         {
             case 0: return new PatternObstacle   (point, representation);
             case 1: return new RandomizedObstacle(point, representation);
-            case 2: return new SequentialObstacle(point, representation);
+            case 2: return new IntelligentObstacle(point, representation);
         }
 
         throw new AssertionError();

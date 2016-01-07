@@ -15,26 +15,56 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Created by petergoldsborough on 12/28/15.
+ * The base-class for all renderable elements of the game.
+ *
+ * Defines some base operations and attributes all elements have in common.
+ * All elements are defined by a point on the screen, a kind enum member to
+ * cheat the type-system as well as a Representation object used to render
+ * the element onto the screen. All elements can be rendered onto a screen
+ * and "unrendered" off it.
+ *
  */
 public abstract class Element
 {
+    /**
+     * The kind of each Element. A way to cheat the type-system and
+     * "fade" the world between an Element's static and dynamic type.
+     *
+     * The PLAYER kind is a bit different than all others. This Kind
+     * must exist because every Element has a kind and a Player is an Element,
+     * but at the same time it is unwanted in many contexts because it
+     * has a special status. That is why the kinds() method returns
+     * a collection of all kinds except Player. The factory method in
+     * the Element class also does now allow creation of Players.
+     *
+     */
     public enum Kind
     {
-        WALL(0),
-        ENTRANCE(1),
-        EXIT(2),
-        KEY(3),
-        STATIC_OBSTACLE(4),
-        DYNAMIC_OBSTACLE(5),
-        MYSTERY_BOX(6),
-        PLAYER(7);
+        WALL,
+        ENTRANCE,
+        EXIT,
+        KEY,
+        STATIC_OBSTACLE,
+        DYNAMIC_OBSTACLE,
+        MYSTERY_BOX,
+        PLAYER;
 
+        /**
+         * @return All kinds except for PLAYER.
+         */
         public static Collection<Kind> kinds()
         {
             return Collections.unmodifiableCollection(_kinds);
         }
 
+        /**
+         *
+         * Factory-function get the a Kind given it's code.
+         *
+         * @param code The code (ordinal) of the enum.
+         *
+         * @return The Kind associated with that code.
+         */
         public static Kind fromCode(int code)
         {
             switch(code)
@@ -47,29 +77,43 @@ public abstract class Element
                 case 5: return DYNAMIC_OBSTACLE;
                 case 6: return MYSTERY_BOX;
                 case 7: return PLAYER;
-
-                default: assert(false);
             }
 
-            return null;
+            throw new AssertionError();
         }
 
+        /**
+         * @return The result of toString(), but with proper
+         *         capitalization and underlines replaced with spaces.
+         */
         public String toLowerString()
         {
+            // Lazy caching
+            if (_lowerString == null)
+            {
+                _lowerString = _toLowerString(this.toString());
+            }
+
             return _lowerString;
         }
 
+        /**
+         * @return The code (ordinal) of the Kind.
+         */
         public int code()
         {
-            return _code;
+            return ordinal();
         }
 
-        private Kind(int code)
-        {
-            _code = code;
-            _lowerString = _toLowerString(this.toString());
-        }
-
+        /**
+         *
+         * Turns the toString() of the Kind into a nicer representation.
+         *
+         * @param string The result of toString()
+         *
+         * @return The result of toString(), but with proper
+         *         capitalization and underlines replaced with spaces.
+         */
         private static String _toLowerString(String string)
         {
             StringBuilder builder = new StringBuilder();
@@ -86,6 +130,9 @@ public abstract class Element
             return builder.toString();
         }
 
+        /**
+         * All kinds except PLAYER.
+         */
         private static final ArrayList<Kind> _kinds = new ArrayList<Kind>(
                 Arrays.asList(
                         WALL,
@@ -97,11 +144,21 @@ public abstract class Element
                         MYSTERY_BOX
         ));
 
-        private final int _code;
-
-        private final String _lowerString;
+        private String _lowerString;
     }
 
+    /**
+     *
+     * Factory-function for Elements.
+     *
+     * @param kind The Kind of the Element to create. Must not be PLAYER.
+     *
+     * @param point The Point the Element should be constructed at.
+     *
+     * @param theme The Theme containing the Representation for the new Element.
+     *
+     * @return A newly constructed Element.
+     */
     public static Element Create(Kind kind, Point point, Theme theme)
     {
         assert(kind != null);
@@ -129,7 +186,7 @@ public abstract class Element
                 return new StaticObstacle(point, representation);
 
             case DYNAMIC_OBSTACLE:
-                return new SequentialObstacle(point, representation);
+                return new IntelligentObstacle(point, representation);
 
             case MYSTERY_BOX:
                 return new MysteryBox(point, representation);
@@ -138,6 +195,17 @@ public abstract class Element
         throw new IllegalArgumentException("Kind invalid!");
     }
 
+    /**
+     *
+     * Constructs a new Element.
+     *
+     * @param kind The Kind of the Element to create.
+     *
+     * @param point The Point the Element should be constructed at.
+     *
+     * @param representation The Representation for the Element.
+     *
+     */
     public Element(Kind kind,
                    Point point,
                    Representation representation)
@@ -148,16 +216,50 @@ public abstract class Element
         this.representation(representation);
     }
 
+    /**
+     *
+     * Copy-constructor.
+     *
+     * @param other The other Element to copy this one from.
+     */
     public Element(Element other)
     {
         this(other.kind(), other.point(), other.representation());
     }
 
+    /**
+     *
+     * Renders the Element onto the screen, relativeTo the region.
+     *
+     * The relativeTo Region is necessary because the points of Elements
+     * are always absolute with respected to the level, while they must
+     * be relative to the Terminal when (un)rendered. Thus the relativeTo
+     * Region is first "subtracted" from the Point. The relativeTo Region
+     * must be the Region the Element is contained in.
+     *
+     * @param screen The Screen to render the Element onto.
+     *
+     * @param relativeTo The Region containing the Element.
+     */
     public void render(Screen screen, Region relativeTo)
     {
         _render(screen, relativeTo);
     }
 
+    /**
+     *
+     * Unrenders the Element onto the screen, relativeTo the region.
+     *
+     * The relativeTo Region is necessary because the points of Elements
+     * are always absolute with respected to the level, while they must
+     * be relative to the Terminal when (un)rendered. Thus the relativeTo
+     * Region is first "subtracted" from the Point. The relativeTo Region
+     * must be the Region the Element is contained in.
+     *
+     * @param screen The Screen to unrender the Element from.
+     *
+     * @param relativeTo The Region containing the Element.
+     */
     public void unrender(Screen screen, Region relativeTo)
     {
         ScreenWriter writer = new ScreenWriter(screen);
@@ -172,16 +274,28 @@ public abstract class Element
         );
     }
 
+    /**
+     * @return The Kind of the Element.
+     */
     public Kind kind()
     {
         return _kind;
     }
 
+    /**
+     * @return The current Point of the Element.
+     */
     public Point point()
     {
         return _point;
     }
 
+    /**
+     *
+     * Sets the Point of the Element.
+     *
+     * @param point The new Point for the Element.
+     */
     public void point(Point point)
     {
         assert(point != null);
@@ -189,11 +303,20 @@ public abstract class Element
         _point = point;
     }
 
+    /**
+     * @return The Representation of the Element.
+     */
     public Representation representation()
     {
         return _representation;
     }
 
+    /**
+     *
+     * Sets the Representation of the Element.
+     *
+     * @param representation The new Representation for the Element.
+     */
     public void representation(Representation representation)
     {
         assert(representation != null);
@@ -201,6 +324,15 @@ public abstract class Element
         _representation = representation;
     }
 
+    /**
+     *
+     * Checks equality between the Element and an object.
+     *
+     * @param object The object to check equality for.
+     *
+     * @return True if the object is an Element of
+     *         the same kind, at the same point.
+     */
     @Override public boolean equals(Object object)
     {
         if (object == null) return false;
@@ -215,6 +347,20 @@ public abstract class Element
                this._point.equals(other._point);
     }
 
+    /**
+     *
+     * Renders the Element onto the Screen relative to the Region,
+     * and also applying the given styles. This method can be used
+     * by subclasses that wish to add some styles to the rendering
+     * of the Elements of their kind. The default implementation of
+     * render() in Element calls this method with no styles.
+     *
+     * @param screen The Screen to render Elements onto.
+     *
+     * @param relativeTo The Region containing the Element.
+     *
+     * @param styles The array of ScreenCharacterStyles to apply.
+     */
     protected void _render(Screen screen,
                            Region relativeTo,
                            ScreenCharacterStyle... styles)

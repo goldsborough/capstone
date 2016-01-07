@@ -13,11 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by petergoldsborough on 12/30/15.
+ * A Widget to manage creation of a new Theme.
+ *
+ * This "Theme Creation" Window shows an InputWidget for a name along
+ * with buttons to open RepresentationWidgets for each of the Kinds,
+ * such that every Kind gets a Representation in the Theme.
  */
-public class ThemeCreationWindow extends Widget
+public class ThemeCreationWidget extends Widget
 {
-    public ThemeCreationWindow()
+    /**
+     * Constructs a new ThemeCreationWidget.
+     */
+    public ThemeCreationWidget()
     {
         super("Theme Creation");
 
@@ -25,23 +32,20 @@ public class ThemeCreationWindow extends Widget
 
         _createNameEntry();
 
-        _addEntry(Element.Kind.WALL);
+        Element.Kind.kinds().forEach(this::_addEntry);
 
-        _addEntry(Element.Kind.ENTRANCE);
-
-        _addEntry(Element.Kind.EXIT);
-
-        _addEntry(Element.Kind.KEY);
-
-        _addEntry(Element.Kind.STATIC_OBSTACLE);
-
-        _addEntry(Element.Kind.DYNAMIC_OBSTACLE);
-
-        _addEntry(Element.Kind.MYSTERY_BOX);
-
+        // CANCEL and EXIT
         _createBottomButtons();
     }
 
+    /**
+     *
+     * First validates the entries for the various Kinds. If the input
+     * is valid for all RepresentationWidgets and the InputWidget for
+     * the Theme's name, a valid Theme is returned, else null.
+     *
+     * @return Returns a valid Theme, if possible.
+     */
     public Theme theme()
     {
         if (! validate()) return null;
@@ -49,10 +53,18 @@ public class ThemeCreationWindow extends Widget
         return _makeTheme();
     }
 
+    /**
+     *
+     * Validates the NameWidget and the
+     * RepresentationWidgets for all the Kinds.
+     *
+     * @return True if the Theme is valid, else false.
+     */
     public boolean validate()
     {
         if (! _name.validate()) return false;
 
+        // Validate the RepresentationWidgets
         for (RepresentationWidget widget : _representations.values())
         {
             if (! widget.isValid())
@@ -66,12 +78,18 @@ public class ThemeCreationWindow extends Widget
         return true;
     }
 
+    /**
+     *
+     * Shows a message box that some input was invalid in the given Widget.
+     *
+     * @param widget The RepresentationWidget that was invalid.
+     */
     private void _showMessageBox(RepresentationWidget widget)
     {
         String message = String.format(
                 "\n%s: The input for '%s' was not valid!",
                 widget.title(),
-                widget.culprit()
+                widget.culprit() // Tells you what was invalid
         );
 
         MessageBox.showMessageBox(
@@ -81,6 +99,9 @@ public class ThemeCreationWindow extends Widget
         );
     }
 
+    /**
+     * Creates the InputWidget for the name of the Theme.
+     */
     private void _createNameEntry()
     {
         addSpace(0, 2);
@@ -92,7 +113,14 @@ public class ThemeCreationWindow extends Widget
         addSpace(0, 2);
     }
 
-    private RepresentationWidget _addEntry(Element.Kind kind)
+    /**
+     *
+     * Adds a new button to the ThemeCreationWidget, which,
+     * when clicked, opens a RepresentationWidget for the Kind.
+     *
+     * @param kind The Kind of Element to add an Entry for.
+     */
+    private void _addEntry(Element.Kind kind)
     {
         RepresentationWidget widget = _createRepresentationWidget(kind);
 
@@ -105,35 +133,51 @@ public class ThemeCreationWindow extends Widget
         addSpace(0, 2);
 
         _representations.put(kind, widget);
-
-        return widget;
     }
 
+    /**
+     *
+     * Creates anew RepresentationWidget for a given Kind.
+     *
+     * @param kind The Kind to create the RepresentationWidget for.
+     *
+     * @return The resulting RepresentationWidget.
+     */
     RepresentationWidget _createRepresentationWidget(Element.Kind kind)
     {
-        RepresentationWidget widget = new RepresentationWidget(kind.toLowerString());
+        RepresentationWidget widget =
+                new RepresentationWidget(kind.toLowerString());
 
         widget.addSpace(0, 2);
 
-        widget.add(new ButtonSlot(false, ButtonSlot.Kind.DONE, ButtonSlot.Kind.CANCEL));
+        widget.add(new ButtonSlot(
+                false,
+                ButtonSlot.Kind.DONE,
+                ButtonSlot.Kind.CANCEL)
+        );
 
         return widget;
     }
 
+    /**
+     * @return
+     */
     private Theme _makeTheme()
     {
         HashMap<Element.Kind, Representation> map = new HashMap<>();
 
-        for (Map.Entry<Element.Kind, RepresentationWidget> entry : _representations.entrySet())
+        // Collect the Representations of the Kinds
+        for (Element.Kind kind : _representations.keySet())
         {
-            Representation representation = entry.getValue().representation();
+            Representation representation =
+                    _representations.get(kind).representation();
 
             assert(representation != null);
             assert(representation.character()  != null);
             assert(representation.background() != null);
             assert(representation.foreground() != null);
 
-            map.put(entry.getKey(), representation);
+            map.put(kind, representation);
         }
 
         Theme theme = new Theme(_name.text(), map);
@@ -147,6 +191,13 @@ public class ThemeCreationWindow extends Widget
         return theme;
     }
 
+    /**
+     * Adds the buttons at the bottom of the Widget.
+     *
+     * Those buttons are DONE, CANCEL and EXIT.
+     *
+     * DONE only closes the window if the input is validated.
+     */
     private void _createBottomButtons()
     {
         add(new ButtonSlot(

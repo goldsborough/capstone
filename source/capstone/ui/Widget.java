@@ -78,7 +78,7 @@ public class Widget extends Window implements Component
     }
 
     /**
-     * Constructs a Widget with an empty title and vertical orientation.
+     * Constructs a Widget with an empty name and vertical orientation.
      */
     public Widget()
     {
@@ -87,9 +87,9 @@ public class Widget extends Window implements Component
 
     /**
      *
-     * Constructs a Widget with the given title and vertical orientation.
+     * Constructs a Widget with the given name and vertical orientation.
      *
-     * @param title The title of the window.
+     * @param title The name of the window.
      */
     public Widget(String title)
     {
@@ -98,7 +98,7 @@ public class Widget extends Window implements Component
 
     /**
      *
-     * Constructs a Widget with an empty title and the given orienation.
+     * Constructs a Widget with an empty name and the given orienation.
      *
      * @param orientation The orientation of the window (how components/widgets
      *                    are added to the panel)
@@ -110,9 +110,9 @@ public class Widget extends Window implements Component
 
     /**
      *
-     * Constructs a Widget with the given title and the given orienation.
+     * Constructs a Widget with the given name and the given orienation.
      *
-     * @param title The title of the window.
+     * @param title The name of the window.
      *
      * @param orientation The orientation of the window (how components/widgets
      *                    are added to the panel)
@@ -527,7 +527,7 @@ public class Widget extends Window implements Component
      *
      * @param path The directory path to open.
      *
-     * @param what What you're selecting. The title is "Choose" + what.
+     * @param what What you're selecting. The name is "Choose" + what.
      *
      * @return A selected file, if any. Null if the operation was cancelled.
      */

@@ -1,24 +1,17 @@
 package capstone.utility;
 
-import capstone.data.Profile;
 import capstone.data.Representation;
-import capstone.element.SequentialObstacle;
+import capstone.element.IntelligentObstacle;
 import capstone.element.Element;
 import capstone.element.Exit;
 import capstone.element.Wall;
-import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.smartcardio.TerminalFactory;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -106,12 +99,12 @@ public class ExistingPageTest
 
     @Test public void testUpdateChangesSequentialObstaclePositions()
     {
-        SequentialObstacle first = new SequentialObstacle(
+        IntelligentObstacle first = new IntelligentObstacle(
                 new Point(10, 10),
                 representation
         );
 
-        SequentialObstacle second = new SequentialObstacle(
+        IntelligentObstacle second = new IntelligentObstacle(
                 new Point(5, 5),
                 representation
         );
@@ -119,7 +112,7 @@ public class ExistingPageTest
         page.add(first);
         page.add(second);
 
-        Map<SequentialObstacle, Point> previous = new HashMap<>();
+        Map<IntelligentObstacle, Point> previous = new HashMap<>();
 
         previous.put(first, new Point(first.point()));
         previous.put(second, new Point(second.point()));
@@ -127,7 +120,7 @@ public class ExistingPageTest
         page.update();
 
         // All positions should have changed
-        for (Map.Entry<SequentialObstacle, Point> entry : previous.entrySet())
+        for (Map.Entry<IntelligentObstacle, Point> entry : previous.entrySet())
         {
             assertThat(entry.getKey().point(), is(not(entry.getValue())));
         }
