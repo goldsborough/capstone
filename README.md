@@ -8,7 +8,7 @@ Highlights include: it's actually very customizable! You can create your own pro
 
 ## Screenshot
 
-![:camera:](https://raw.githubusercontent.com/goldsborough/capstone/master/docs/img/screenshot.png?token=AGIcm872JMvH85QyDyZlhkn93hxxGgWtks5WlqsEwA%3D%3D)
+![:camera:](https://raw.githubusercontent.com/goldsborough/capstone/master/docs/img/screenshot.png?token=AGIcm4Xdi6tQaW73fCyO9yi7Gai-GzI0ks5WmCRcwA%3D%3D)
 
 ## Building
 
