@@ -155,11 +155,21 @@ public class KeyMapTest
         assertThat(map.right(), is(new InputKey(InputKey.Kind.Insert)));
     }
 
-    @Test public void testSwapsWell()
+    @Test public void testSwapsKeysWell()
     {
         KeyMap map = KeyMap.WASD();
 
         map.swap(new InputKey('a'), new InputKey('d'));
+
+        assertThat(map.left(), is(new InputKey('d')));
+        assertThat(map.right(), is(new InputKey('a')));
+    }
+
+    @Test public void testDirectionsWell()
+    {
+        KeyMap map = KeyMap.WASD();
+
+        map.swap(Direction.LEFT, Direction.RIGHT);
 
         assertThat(map.left(), is(new InputKey('d')));
         assertThat(map.right(), is(new InputKey('a')));

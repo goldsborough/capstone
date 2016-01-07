@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Created by petergoldsborough on 01/06/16.
+ * An enum class describing directions of motion.
  */
 public enum Direction
 {
@@ -16,13 +16,21 @@ public enum Direction
     RIGHT(Delta.Right()),
     STAY(Delta.Stay());
 
+    /**
+     * @return The directions representing motion, i.e. all except STAY.
+     */
     public static Collection<Direction> motion()
     {
         return _motion;
     }
 
+    /**
+     * @return The direction opposite to that of the instance.
+     *         The opposite of STAY is defined as STAY again.
+     */
     public Direction opposite()
     {
+        // Lazy caching
         if (_opposite == null)
         {
             switch (valueOf(name()))
@@ -38,21 +46,36 @@ public enum Direction
         return _opposite;
     }
 
+    /**
+     * @return True if the direction is up or down, else false.
+     */
     public boolean isVertical()
     {
         return this == UP || this == DOWN;
     }
 
+    /**
+     * @return True if the direction is left or right, else false.
+     */
     public boolean isHorizontal()
     {
         return this == LEFT || this == RIGHT;
     }
 
+    /**
+     * @return The delta associated with the direction.
+     */
     public Delta delta()
     {
         return _delta;
     }
 
+    /**
+     *
+     * Constructs the Direction and associates it with the given delta.
+     *
+     * @param delta The delta this Direction should be associated with.
+     */
     private Direction(Delta delta)
     {
         assert(delta != null);
@@ -60,6 +83,9 @@ public enum Direction
         _delta = delta;
     }
 
+    /**
+     * The directions representing motion.
+     */
     private static Collection<Direction> _motion = new ArrayList<Direction>(){{
         add(UP);
         add(DOWN);
