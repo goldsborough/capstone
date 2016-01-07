@@ -26,9 +26,11 @@ You can also easily import the project into NetBeans (`nbproject`) or Intellij (
 
 Test coverage for non-UI classes (especially any utility/data classes) is quite high. Tests are contained in the `test` folder and can be executed with `JUnit` and `HamCrest`, both included in `test/lib`.
 
+Note that you will want to run the tests with the `-Djava.awt.headless=true`, as some tests require opening a GUI screen temporarily. Passing that flag will prevent it from showing, without affecting the test results.
+
 ## Documentation
 
-...
+The code has 100% documentation coverage. Generated JavaDoc is available in the `docs` folder and can be re-generated with any JavaDoc tool.
 
 ## Authors
 
