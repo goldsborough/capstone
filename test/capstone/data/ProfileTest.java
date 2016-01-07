@@ -138,8 +138,6 @@ public class ProfileTest
 
         assertContains(serialized, "RIGHT", "ArrowRight");
 
-        assertContains(serialized, "timesPlayed", "0");
-
         assertContains(serialized, "representation.character", "");
         assertContains(serialized, "representation.background", "RED");
         assertContains(serialized, "representation.foreground", "BLUE");
@@ -156,8 +154,6 @@ public class ProfileTest
         test.setProperty("DOWN", "ArrowUp");
         test.setProperty("LEFT", "ArrowRight");
         test.setProperty("RIGHT", "ArrowLeft");
-
-        test.setProperty("timesPlayed", "123");
 
         test.setProperty("representation.character", "@");
         test.setProperty("representation.background", "WHITE");
