@@ -36,7 +36,7 @@ def setup_parser():
 	return parser
 
 def handle_directory():
-	match = re.match(r'.*capstone', os.getcwd())
+	match = re.match(r'.*capstone.*?(?:\/|$)', os.getcwd())
 	if not match:
 		raise RuntimeError('Cannot find path to capstone root!')
 	os.chdir(match.group())
