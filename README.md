@@ -18,7 +18,9 @@ You can compile the source as usual with `javac` and `java`:
 
 `java -cp lib/lanterna-2.1.9.jar:source Main`
 
-or optionally run the `run.py` script, which gives you the option to build the project with the `-b/--build` switch and then run it either in the terminal via `-t/--terminal` or in a SWING GUI using `-g/--graphical`.
+or optionally run the `run.py` script, which gives you the option to build the project with the `-b/--build` switch and then run it either in the terminal via `-t/--terminal` or in a SWING GUI using `-g/--graphical`. For example, it's this simple to build and run:
+
+`python run.py -bg`
 
 You can also easily import the project into NetBeans (`nbproject`) or Intellij (`.idea`).
 
