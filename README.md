@@ -14,7 +14,8 @@
 9.  Fancy Status Bar with lots of information that resizes for new players!
 10. You can press 'Backspace'/'Delete' to get to the legend directly!
 11. Pretty GUI Menus!
-12. Tests!
+12. Players blink!
+13. Tests!
 
 ## Building
 
