@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
 import capstone.element.Direction;
-import capstone.element.Player;
 import capstone.ui.InputKey;
 import capstone.utility.KeyMap;
 import com.googlecode.lanterna.input.Key;
