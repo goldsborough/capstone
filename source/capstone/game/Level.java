@@ -13,6 +13,7 @@ import capstone.utility.LevelSize;
 import capstone.utility.Page;
 import capstone.utility.PageGrid;
 import capstone.utility.Point;
+import capstone.utility.Region;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
@@ -347,6 +348,18 @@ public class Level
     }
 
     /**
+     * @return The region of the level.
+     */
+    public Region region()
+    {
+        // Regions are inclusive, sizes not
+        return new Region(
+                _levelSize.getColumns() - 1,
+                _levelSize.getRows()    - 1
+        );
+    }
+
+    /**
      * @return The difficulty setting.
      */
     public Difficulty difficulty()
@@ -446,7 +459,8 @@ public class Level
 
         Delta delta = new Delta(direction);
 
-        if (! player.wouldGoNegative(delta))
+        // Only move if it wouldn't invalidate constraints
+        if (! player.wouldGoOutside(delta, region()))
         {
             _page = _grid.follow(player.move(delta));
         }

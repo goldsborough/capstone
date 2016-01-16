@@ -271,6 +271,24 @@ public class Player extends Element
     }
 
     /**
+     *
+     * Checks if the Player's Point would go outside the given Region if
+     * the Delta were applied to the Player's point.
+     *
+     * @param delta The Delta to test.
+     *
+     * @return True if the Delta would invalidate the constraints set
+     *         for Points (non-negativity on both components) or move
+     *         the Player outside the Region, else true if the resulting
+     *         Point were a valid one, such that move can be called with
+     *         this Delta.
+     */
+    public boolean wouldGoOutside(Delta delta, Region region)
+    {
+        return _point.wouldGoOutside(delta, region);
+    }
+
+    /**
      * @return True if the Player has yet performed
      *         at least one motion, else false.
      */
